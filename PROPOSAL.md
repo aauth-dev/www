@@ -4,6 +4,8 @@
 
 Public website for the AAuth protocol family at **aauth.ai**, hosted on Cloudflare Pages. The site serves as the authoritative resource for understanding, adopting, and implementing AAuth — the authentication and authorization protocol for autonomous agents.
 
+AAuth.ai has its own visual identity, separate from Hellō branding.
+
 ## Audience
 
 1. **Decision-makers & architects** evaluating agent auth approaches
@@ -18,15 +20,15 @@ Public website for the AAuth protocol family at **aauth.ai**, hosted on Cloudfla
 | Framework | **Next.js 13 + Nextra** | Same stack as hello.dev — team familiarity, proven, great for docs |
 | Styling | **Tailwind CSS** | Consistent with hello.dev |
 | Hosting | **Cloudflare Pages** | Domain is registered at Cloudflare, zero-config deployment, global CDN |
+| Analytics | **Cloudflare Web Analytics** | Free, built-in, privacy-friendly, no extra setup |
 | Build | **Static export** (`output: 'export'`) | No server needed, fast, cacheable |
-| CI/CD | **GitHub Actions → Cloudflare Pages** | Push to `main` triggers deploy via `wrangler pages deploy` |
+| CI/CD | **Cloudflare Pages GitHub integration** | Auto-deploy on push to `main`, preview deploys on PRs |
 
-### Why Cloudflare Pages (not S3 like hello.dev)
+### Domain
 
-- Domain already at Cloudflare — DNS integration is instant
-- Cloudflare Pages has built-in CI/CD with GitHub integration
-- Free tier is generous (unlimited bandwidth, 500 builds/month)
-- Automatic preview deployments on PRs
+Primary domain: **`aauth.ai`** (bare/apex). Redirect `www.aauth.ai` → `aauth.ai`.
+
+Cloudflare technically recommends `www` as primary (cleaner CNAME), but bare domains are the industry norm and work fine with Cloudflare's CNAME flattening. A `_redirects` file handles the www → apex redirect.
 
 ## Site Structure
 
@@ -36,83 +38,106 @@ aauth.ai/
 ├── /explainer                  # Non-technical overview (from aauth-explainer.md)
 │   ├── Why AAuth               # Problem statement, what changed since OAuth
 │   ├── How It Works            # Core concepts, flow diagrams
-│   ├── vs OAuth/OIDC           # Comparison tables
-│   └── vs Other Approaches     # klrc comparison, etc.
-├── /specs                      # Specification family
-│   ├── Overview                # Layered architecture diagram
-│   ├── /signature-key          # Layer 1 — links to datatracker
-│   ├── /headers                # Layer 2 — rendered from draft-hardt-aauth-headers.md
-│   ├── /protocol               # Layer 3 — rendered from draft-hardt-aauth-protocol.md
-│   ├── /mission                # Layer 4a — rendered from draft-hardt-aauth-mission.md
-│   └── /r3                     # Layer 4b — rendered from draft-hardt-aauth-r3.md
-├── /tools                      # Interactive developer tools (see below)
-├── /blog                       # Articles, announcements, Karl's series
-│   └── Karl McGuinness series  # Agent authority thinking pieces
+│   └── vs OAuth/OIDC           # Comparison tables
+├── /specs                      # Specification family (links to authoritative sources)
+│   ├── Overview                # Layered architecture diagram + links
+│   ├── /signature-key          # → IETF Datatracker
+│   ├── /headers                # → IETF Datatracker
+│   ├── /protocol               # → IETF Datatracker
+│   ├── /mission                # → dickhardt/AAuth editor's copy (exploratory)
+│   └── /r3                     # → dickhardt/AAuth editor's copy (exploratory)
+├── /demo                       # Interactive demos (see below)
+│   ├── /agent                  # Demo AAuth agent
+│   └── /resource               # Demo AAuth resource
+├── /blog                       # External articles + community writing
 ├── /implementations            # Links to TypeScript impl, future SDKs
 └── /community                  # Contributing, GitHub links, discussion
 ```
+
+## Spec Pages — Links to Truth
+
+The aauth.ai site does **not** host or sync spec content. Each spec page provides:
+
+- A summary of what the layer does and the primitives it provides
+- The layered architecture context (where it fits)
+- Links to the authoritative source:
+
+| Spec | Status | Authoritative Source |
+|------|--------|---------------------|
+| Signature-Key | Internet-Draft | [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/) |
+| AAuth Headers | Internet-Draft | [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-aauth-headers) |
+| AAuth Protocol | Internet-Draft | [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol) |
+| AAuth Mission | Exploratory | [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-mission.html) (dickhardt/AAuth) |
+| AAuth R3 | Exploratory | [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html) (dickhardt/AAuth) |
 
 ## Content Sources
 
 | Content | Source | Approach |
 |---------|--------|----------|
 | Explainer | `DickHardt/AAuth/aauth-explainer.md` | Adapt into multiple Nextra pages |
-| Specs | `DickHardt/AAuth/draft-*.md` | Rendered HTML from i-d-template, or converted to MDX |
 | Comparisons | `DickHardt/AAuth/comparison-klrc-aauth.md` | Adapt into explainer section |
-| Karl's series | `DickHardt/AAuth/notes/Karl/` | Blog posts with editorial intro |
+| Blog/articles | External posts (see below) | Link cards with summaries |
 | Implementation | `hellocoop/AAuth` | Links and getting-started guides |
 
-### Spec Content Strategy
+## Blog / External Articles
 
-Two options for rendering specifications:
+Curated links to articles about AAuth and agent auth, organized by author.
 
-**Option A: Embed rendered HTML** — Use an iframe or static copy of the HTML generated by i-d-template. Keeps spec formatting authentic but limits site integration.
+### Christian Posta (blog.christianposta.com)
 
-**Option B: Convert to MDX** — Transform spec markdown into Nextra-compatible MDX. Better navigation and search, but requires maintaining the conversion.
+**AAuth Deep Dives:**
+- [Deep Dive AAuth — Identity and Access Management for AI Agents](https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/)
+- [AAuth Full Demo](https://blog.christianposta.com/aauth-full-demo/) — Working demo with Keycloak, Agentgateway, Java/Python/Rust
+  - [Agent Identity with JWKS](https://blog.christianposta.com/aauth-full-demo/agent-identity-jwks.html)
+  - [Agent Authorization (Autonomous)](https://blog.christianposta.com/aauth-full-demo/agent-authorization-autonomous.html)
+  - [Agent Authorization (On Behalf Of)](https://blog.christianposta.com/aauth-full-demo/agent-authorization-on-behalf-of.html)
+  - [Apply Policy with Agentgateway](https://blog.christianposta.com/aauth-full-demo/apply-policy-agentgateway.html)
 
-**Recommendation:** Option A for the formal specs (authenticity matters for IETF docs), with a Nextra "guide" version alongside each spec that extracts the key concepts into a more readable format.
+**Agent Identity & Auth Series:**
+- [Do AI Agents Need Their Own Identity?](https://blog.christianposta.com/do-we-even-need-agent-identity/)
+- [AI Agent Delegation — You Can't Delegate What You Don't Control](https://blog.christianposta.com/cracks-in-our-identity-foundations/)
+- [Explaining OAuth Delegation, "On Behalf Of", and Agent Identity for AI Agents](https://blog.christianposta.com/explaining-on-behalf-of-for-ai-agents/)
+- [Configuring A2A OAuth User Delegation](https://blog.christianposta.com/setting-up-a2a-oauth-user-delegation/)
+- [Inbound Auth for Agentcore With Agentgateway](https://blog.christianposta.com/inbound-auth-for-agentcore-with-agentgateway/)
+- [Mitigate Prompt Injection Attacks With A2AS and Agentgateway](https://blog.christianposta.com/mitigate-prompt-injection-attacks-with-a2as-and-agentgateway/)
 
-## Built-in Tools
+### Karl McGuinness (notes in DickHardt/AAuth)
 
-Interactive tools that help developers understand and work with AAuth:
+Seven-part series on agent authority and delegation — foundational thinking behind AAuth:
+1. Agents Don't Need Your Passport
+2. From Passports to Power of Attorney
+3. Governing the Stay
+4. Mission-Bound OAuth
+5. Client Context and ID JAG
+6. Mission Architecture on AAuth
+7. Why Mission-Bound OAuth Might Be Wrong
 
-### 1. AAuth Flow Visualizer
-An interactive diagram showing the AAuth authorization flow. Users select a scenario (basic auth, multi-hop, mission-scoped) and see the message sequence with expandable details for each step.
+These could be published as blog posts on aauth.ai with Karl's permission, or linked if published elsewhere.
 
-- Scenarios: pseudonym → identity → interaction → approval progression
-- Shows HTTP headers, token contents, and signing steps
-- Built with React + SVG/Canvas
+## Interactive Demos
 
-### 2. Token Inspector
-Paste or generate sample AAuth tokens (agent, resource, auth) and see their decoded contents with annotations explaining each field.
+Rather than abstract developer tools, the site hosts live demos that show AAuth in action:
 
-- Decode JWT-like token structure
-- Highlight proof-of-possession binding
-- Show signature verification chain
-- Compare to equivalent OAuth tokens
+### Demo Agent
+A browser-based AAuth agent that demonstrates:
+- Generating an ephemeral key pair (Web Crypto API)
+- Self-publishing agent metadata at a well-known URL
+- Signing HTTP requests with HTTP Message Signatures
+- Requesting and receiving tokens through the AAuth flow
+- Progressive trust escalation (pseudonym → identity → interaction → approval)
 
-### 3. HTTP Signature Playground
-Demonstrate HTTP Message Signatures (RFC 9421) with AAuth's Signature-Key header:
+The demo walks through each step with visible HTTP messages, headers, and token contents so developers can see exactly what happens on the wire.
 
-- Input: HTTP request method, URL, headers, body
-- Output: Signed request with Signature and Signature-Input headers
-- Verify: Paste a signed request to verify the signature
-- Uses Web Crypto API (all client-side, no secrets leave the browser)
+### Demo Resource
+A browser-based AAuth resource that demonstrates:
+- Publishing resource metadata
+- Responding with `AAuth-Requirement` headers at different levels
+- Issuing resource tokens (access challenges)
+- Verifying signed requests and validating auth tokens
 
-### 4. Entity Metadata Generator
-Generate well-known metadata documents for AAuth entities:
+Together, the Demo Agent and Demo Resource form an end-to-end walkthrough: the agent calls the resource, gets challenged, obtains authorization, and completes the request — all visible in the browser.
 
-- Agent server metadata (`/.well-known/aauth-agent`)
-- Auth server metadata (`/.well-known/aauth-as`)
-- Resource metadata
-- Outputs JSON with explanatory annotations
-
-### 5. Migration Guide Tool
-Interactive questionnaire that helps developers understand how AAuth relates to their existing OAuth/OIDC setup:
-
-- "I currently use..." → shows equivalent AAuth concepts
-- "I need..." → shows which AAuth layers apply
-- Generates a recommended adoption path
+Both demos run entirely client-side using Web Crypto API. No backend required.
 
 ## Home Page Design
 
@@ -157,7 +182,7 @@ Interactive questionnaire that helps developers understand how AAuth relates to 
 │  │ Signature-Key (1)                   │   │
 │  └─────────────────────────────────────┘   │
 │                                             │
-│  [Try the Tools]  [GitHub]  [TypeScript]   │
+│  [Try the Demo]  [GitHub]  [TypeScript]    │
 └─────────────────────────────────────────────┘
 ```
 
@@ -167,60 +192,48 @@ Interactive questionnaire that helps developers understand how AAuth relates to 
 GitHub Push (main)
        │
        ▼
-GitHub Actions
+Cloudflare Pages (auto-build)
        │
        ├── npm run build (Next.js static export)
-       ├── npm run test (linkinator)
        │
        ▼
-wrangler pages deploy out/
-       │
-       ▼
-Cloudflare Pages (aauth.ai)
+Cloudflare CDN (aauth.ai)
 ```
 
 ### PR Preview Deployments
-Every PR gets a preview URL at `<branch>.aauth-ai.pages.dev` via Cloudflare Pages' built-in preview feature.
+Every PR gets a preview URL at `<hash>.aauth-ai.pages.dev` automatically via Cloudflare Pages.
 
 ## Phased Rollout
 
-### Phase 1: Foundation (Week 1-2)
+### Phase 1: Foundation
 - [ ] Scaffold Nextra project with Cloudflare Pages deployment
+- [ ] AAuth branding (logo, colors, typography)
 - [ ] Home page with hero, value props, spec layer diagram
 - [ ] Explainer content adapted from aauth-explainer.md
-- [ ] Spec pages linking to rendered HTML (editor's copies)
+- [ ] Spec overview page with links to authoritative sources
 - [ ] Basic SEO, favicon, OG tags
+- [ ] Cloudflare Web Analytics snippet
 
-### Phase 2: Content Depth (Week 3-4)
+### Phase 2: Content & Community
 - [ ] OAuth/OIDC comparison pages (adapted from explainer)
-- [ ] Karl McGuinness blog series
+- [ ] Blog/articles page with Christian Posta and Karl McGuinness links
 - [ ] Implementation page linking to hellocoop/AAuth
-- [ ] Spec guide pages (readable versions alongside formal specs)
+- [ ] Community/contributing page
 
-### Phase 3: Interactive Tools (Week 5-8)
-- [ ] AAuth Flow Visualizer
-- [ ] Token Inspector
-- [ ] HTTP Signature Playground
-- [ ] Entity Metadata Generator
+### Phase 3: Interactive Demos
+- [ ] Demo Agent (client-side AAuth agent walkthrough)
+- [ ] Demo Resource (client-side AAuth resource walkthrough)
+- [ ] End-to-end flow demonstration
 
-### Phase 4: Polish & Community (Ongoing)
-- [ ] Migration Guide Tool
-- [ ] Search (Nextra built-in or Algolia)
-- [ ] Community/contributing pages
+### Phase 4: Polish
+- [ ] Search (Nextra built-in)
 - [ ] RSS feed for blog
 - [ ] Markdown export for MCP consumption (like hello.dev)
+- [ ] `_redirects` for www → apex
 
 ## Maintenance Model
 
-- Content updates via PRs (same workflow as hello.dev)
-- Spec updates: when drafts are updated in DickHardt/AAuth, corresponding pages are updated here
-- Blog posts: add MDX files to `pages/blog/`
-- Tools: self-contained React components, updated as protocol evolves
-
-## Open Questions
-
-1. **Spec rendering**: Embed i-d-template HTML or convert to MDX? (Proposal recommends embed + guide)
-2. **Blog platform**: Nextra blog theme or custom? (Nextra blog theme is lightweight and sufficient)
-3. **Analytics**: Plausible (like hello.dev) or Cloudflare Web Analytics (free, built-in)?
-4. **Domain**: `aauth.ai` root or `www.aauth.ai`? (Recommend bare domain with www redirect)
-5. **Branding**: Should the site use Hellō branding or have its own AAuth visual identity?
+- Content updates via PRs to hellocoop/aauth.ai
+- Spec links point to authoritative sources — no syncing needed
+- Blog/articles: add link cards as new external posts appear
+- Demos: self-contained React components, updated as protocol evolves
