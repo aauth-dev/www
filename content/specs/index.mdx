@@ -1,0 +1,23 @@
+---
+title: Specifications
+---
+
+# Specifications
+
+AAuth is defined by a family of layered specifications. Each layer builds on the one below it, providing primitives that higher layers use.
+
+## Layers
+
+| Layer | Spec | Status | Primitives |
+|-------|------|--------|------------|
+| 4b | [R3 — Rich Resource Requests](/specs/r3/) | Exploratory | Vocabulary-based authorization, content-addressed audit |
+| 4a | [Mission](/specs/mission/) | Exploratory | Scoped authorization contexts, centralized audit |
+| 3 | [AAuth Protocol](/specs/protocol/) | Internet-Draft | Token issuance, federation, deferred authorization |
+| 2 | [AAuth Headers](/specs/headers/) | Internet-Draft | Requirement signaling, error reporting |
+| 1 | [Signature-Key](/specs/signature-key/) | Internet-Draft | Key conveyance, signature bootstrapping |
+
+## Reading the Specs
+
+The Internet-Drafts are published on the IETF Datatracker. The exploratory specs are available as editor's copies on GitHub. Each spec page on this site provides a summary of what the layer does and links to the authoritative source.
+
+For a non-normative introduction to the concepts, start with the [Explainer](/explainer/).

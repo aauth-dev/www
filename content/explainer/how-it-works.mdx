@@ -1,0 +1,94 @@
+# How It Works
+
+## Core Concepts
+
+AAuth has three types of entities and three types of tokens.
+
+### Entities
+
+| Entity | Role | Identity |
+|--------|------|----------|
+| **Agent** | Makes requests on behalf of a user (or autonomously) | `local@domain` with self-published metadata + JWKS |
+| **Resource** | Serves protected data or functionality | HTTPS URL with published metadata + JWKS |
+| **Auth Server (AS)** | Issues authorization tokens | HTTPS URL with published metadata |
+
+### Tokens
+
+| Token | Issued by | Purpose |
+|-------|-----------|---------|
+| **Agent Token** | Agent Server | Binds a delegate's key to the agent's identity |
+| **Resource Token** | Resource | An access challenge binding the request to the resource's identity |
+| **Auth Token** | Auth Server | Grants access — carries user identity, scope, and audience |
+
+All tokens are proof-of-possession bound. There are no bearer tokens.
+
+## The Basic Flow
+
+```
+1. Agent → Resource          Signed request
+2. Resource → Agent          401 + Resource Token + AAuth-Requirement
+3. Agent → Auth Server       POST token endpoint (resource token + agent token)
+4. Auth Server → Agent       202 + Location (pending URL) + interaction code
+5. Agent → User              "Go to AS, enter code ABCD1234"
+6. User → Auth Server        Consent + optional clarification chat
+7. Agent → Auth Server       GET pending URL → Auth Token
+8. Agent → Resource          Signed request + Auth Token
+9. Resource → Agent          200 OK
+```
+
+### Step by step
+
+**Step 1-2: Discovery.** The agent makes a signed request to the resource. The resource responds with `401` and an `AAuth-Requirement` header indicating what level of trust is needed. If authorization is required, the response includes a **resource token** — a signed challenge from the resource.
+
+**Step 3-4: Token request.** The agent sends the resource token and its agent token to the auth server's token endpoint. If the AS can grant immediately, it returns the auth token. If user interaction is needed, it returns `202 Accepted` with a pending URL and an interaction code.
+
+**Step 5-6: User interaction.** The agent directs the user to the AS with the interaction code. The user consents, optionally engaging in clarification chat to ask the agent why it needs access.
+
+**Step 7: Polling.** The agent polls the pending URL. When the user consents, the auth token is returned.
+
+**Step 8-9: Access.** The agent presents the auth token in a signed request to the resource.
+
+## Progressive Authentication
+
+Not every request needs full authorization. Resources declare what they need:
+
+```
+AAuth-Requirement: requirement=pseudonym       → just sign the request
+AAuth-Requirement: requirement=identity         → present an agent token
+AAuth-Requirement: requirement=interaction      → user consent needed
+AAuth-Requirement: requirement=approval         → AS obtains approval directly
+```
+
+A resource can escalate at any time. An agent that was accessing at the pseudonym level can be asked for identity or full authorization on the next request.
+
+## Deferred Responses
+
+AAuth consolidates OAuth's many grant types into one async pattern:
+
+```
+POST /token HTTP/1.1
+
+HTTP/1.1 202 Accepted
+Location: /pending/abc123
+AAuth-Requirement: requirement=interaction; code="ABCD1234"
+```
+
+The agent polls `GET /pending/abc123` until the response is ready. This handles:
+- Immediate grants (no `202`, direct response)
+- User consent flows
+- Headless/CLI agents
+- Enterprise approval workflows
+- Clarification chat during consent
+- Push notifications
+
+## No Refresh Tokens
+
+When an auth token expires, the agent presents the expired token to the token endpoint with a valid HTTP Message Signature. The expired token provides context (audience, scope, user), and the signature proves the agent is the legitimate holder. The AS issues a new token without user interaction.
+
+## Cross-Domain Federation
+
+An agent's AS can call a resource's AS to obtain an auth token on behalf of its agent. The agent and resource need not be aware of the federation — they interact with their own AS as usual.
+
+## Call Chaining
+
+When a resource needs to access a downstream resource, it acts as an agent. Authorization passes downstream and interaction requirements bubble up to the user, without any participant needing visibility into the full chain.

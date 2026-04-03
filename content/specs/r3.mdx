@@ -1,0 +1,40 @@
+# AAuth R3 — Rich Resource Requests
+
+**Status:** Exploratory
+**Spec:** draft-hardt-aauth-r3
+
+Optional extension to the Protocol for structured, vocabulary-based authorization. Addresses the limitations of scope strings — they are imprecise for machines and opaque to humans.
+
+## What It Does
+
+### Vocabularies
+
+Resources express their operations in formats agents already understand:
+
+- **MCP** (Model Context Protocol)
+- **OpenAPI**
+- **gRPC**
+- **GraphQL**
+
+A vocabulary maps authorization grants to the actual API surface, making authorization both human-readable and machine-precise.
+
+### R3 Documents
+
+Content-addressed authorization definitions published by resources. An R3 document describes what operations are available and what authorization they require, in the resource's own vocabulary.
+
+### Vocabulary-Based Grants
+
+Auth tokens carry granted operations in the same vocabulary format the resource published. Instead of opaque scope strings like `read` or `write`, the grant specifies exactly which operations are authorized.
+
+**Primitives provided:** human-readable and machine-precise authorization definitions, content-addressed audit provenance
+
+## Why It Matters
+
+Scope strings are a compromise: `calendar.read` is easy to display but tells you nothing about which calendars or what kind of read. R3 lets the resource describe authorization in its own terms — the same API definition the agent already uses to make calls.
+
+The content-addressed design (SHA-256 hash of the R3 document) means the auth token's grant is permanently tied to the specific authorization definition that was in effect, providing an immutable audit trail.
+
+## Read the Spec
+
+- [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html)
+- [Source (GitHub)](https://github.com/dickhardt/AAuth/blob/main/draft-hardt-aauth-r3.md)

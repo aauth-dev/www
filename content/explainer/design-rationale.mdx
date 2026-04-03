@@ -1,0 +1,61 @@
+# Design Rationale
+
+The choices in AAuth are deliberate. This page explains the reasoning behind the key design decisions.
+
+## Why Interaction Codes Instead of Opaque Tokens
+
+Interaction codes are short alphanumeric strings (e.g., `ABCD1234`) rather than long opaque tokens. Short codes can be typed by users, read aloud, displayed on any screen, and encoded as simple QR codes.
+
+A self-contained token carrying cryptographic binding, expiry, and issuer information would be too long for manual entry. The interaction code is a reference to server-side state, not a bearer credential — it has no value without the corresponding pending URL that only the agent knows.
+
+## Why Pending URLs Instead of Authorization Codes
+
+OAuth uses an authorization code: a one-time token exchanged for access tokens. AAuth replaces this with a **pending URL** — a standard HTTP resource the agent polls with GET.
+
+The pending URL supports:
+- **Repeated polling** (the authorization code is single-use)
+- **Long-hold connections** via `Prefer: wait` (reducing polling overhead)
+- **Clarification chat** (the agent can POST responses to user questions at the same URL)
+
+The agent treats the URL as opaque. The server controls whether state is embedded in the URL path or stored server-side.
+
+## Why No Refresh Token
+
+Every AAuth request includes an HTTP Message Signature that proves the agent holds the private key. When an auth token expires, the expired token already contains the authorization context (audience, scope, user). Presenting the expired token with a valid signature is sufficient for the auth server to issue a replacement.
+
+A separate refresh token would duplicate what the signature already proves. This simplifies agent implementation (one token per resource, not two) and eliminates refresh token rotation, storage, and revocation as concerns.
+
+## Why JSON Instead of Form Encoding
+
+OAuth 2.0 uses `application/x-www-form-urlencoded` for token requests — a legacy of its origin in browser form POSTs. Responses use JSON, creating format asymmetry.
+
+AAuth uses JSON for both requests and responses. JSON naturally represents structured data, aligns with modern API conventions, and eliminates the need for form encoding/decoding logic.
+
+## Why .json Extension on Well-Known URLs
+
+AAuth metadata documents use `.json` extensions (`aauth-agent.json`, `aauth-issuer.json`, `aauth-resource.json`) rather than extensionless paths like OAuth's `oauth-authorization-server`.
+
+- **Content type clarity**: The `.json` extension makes the expected format unambiguous to developers, HTTP caches, and tooling.
+- **Simpler static hosting**: Static file servers and CDNs serve `.json` files with correct `Content-Type` headers automatically.
+- **Consistency**: All three metadata documents follow the same naming convention.
+
+## Why Server Identifiers Have No Path
+
+AAuth server identifiers are restricted to scheme + host only — no port, path, query, or fragment. For example, `https://agent.example` is valid but `https://agent.example/v1` is not.
+
+- **Exact string comparison**: No URL normalization needed.
+- **Unambiguous metadata location**: Always `https://{host}/.well-known/aauth-*.json`.
+- **Simpler security model**: Each host has exactly one identity.
+- **Future extensibility**: Path support can be added later if multi-tenant hosting patterns emerge.
+
+## Why Unified Auth Instead of Separate AuthN and AuthZ
+
+OAuth provides authorization. OpenID Connect adds authentication as a layer on top. Most applications need both, requiring coordination of two protocols with different token types, validation rules, and metadata formats.
+
+AAuth collapses this into a single "auth" concept. The auth token carries both user identity (`sub`) and resource authorization (`aud`, `scope`). This eliminates the OAuth/OIDC coordination tax and the class of bugs from mismatched token handling.
+
+## Why Callback URLs Have No Security Role
+
+In OAuth, redirect URI validation is critical because the authorization code passes through the user's browser. An attacker who controls the redirect URI receives the code.
+
+In AAuth, the callback URL carries no tokens or codes. It exists purely to wake the agent up after user interaction. If an attacker redirects the callback, the worst outcome is a premature poll — the agent was already polling and would have received the token regardless.

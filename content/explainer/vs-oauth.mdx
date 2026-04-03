@@ -1,0 +1,71 @@
+# AAuth vs OAuth 2.0/OIDC
+
+AAuth is not a replacement for OAuth or OIDC. They solve different problems. This page compares the two so you can decide which fits your use case.
+
+## Identity Model
+
+| Aspect | OAuth 2.0 | AAuth |
+|--------|-----------|-------|
+| Client identity | Pre-registered `client_id` | `local@domain` with published metadata |
+| Client metadata | Stored at authorization server | Self-published at `/.well-known/aauth-agent.json` |
+| Key management | Client secrets or registered public keys | Ephemeral keys bound via agent tokens |
+| Multiple instances | Share single `client_id` and secret | Each instance has unique `local@domain` and signing key |
+| Discovery | Optional (RFC 8414) | Built-in via well-known metadata |
+
+## Token Delivery
+
+| Aspect | OAuth 2.0 | AAuth |
+|--------|-----------|-------|
+| Token delivery | Redirect with authorization code | `202` + Location URL, poll with GET |
+| User return | Carries authorization code | Redirect to callback (no tokens) |
+| Headless clients | Requires device authorization grant (RFC 8628) | Native support via polling |
+| Long-running consent | Limited by redirect timeout | Unlimited (`Prefer: wait` + polling) |
+
+## Security Model
+
+| Aspect | OAuth 2.0 | AAuth |
+|--------|-----------|-------|
+| Request signing | Optional (DPoP, mTLS) | Required (HTTPSig) on every request |
+| Token type | Bearer (default) | Proof-of-possession only |
+| Message integrity | Not provided | HTTPSig covers method, path, headers |
+| Resource identity | None | Resource tokens with JWKS |
+| Proxy survival | mTLS terminates at proxy | HTTPSig survives proxies |
+
+## User Consent
+
+| Aspect | OAuth 2.0 | AAuth |
+|--------|-----------|-------|
+| What is requested | Scopes | Scopes + justification |
+| Why it's requested | Not conveyed | `justification` parameter |
+| User questions | Not supported | Clarification chat during consent |
+| Enterprise hints | Separate extensions | Built-in: `login_hint`, `tenant`, `domain_hint` |
+
+## Grant Types vs Unified Pattern
+
+OAuth has multiple grant types, each with its own mechanics:
+
+| OAuth Grant Type | AAuth Equivalent |
+|-----------------|-----------------|
+| Authorization Code | `202` + interaction code + polling |
+| Device Authorization (RFC 8628) | `202` + interaction code + polling |
+| Client Credentials | Direct token response (no `202`) |
+| Token Exchange (RFC 8693) | Cross-domain AS federation |
+| CIBA | `202` + `requirement=approval` |
+
+AAuth replaces all of these with a single endpoint and one async pattern.
+
+## When to Use Which
+
+**Use OAuth/OIDC when:**
+- You have a web application with browser-based users
+- Clients are pre-registered and known
+- You're working within a single trust domain
+- You need compatibility with existing OAuth infrastructure
+
+**Use AAuth when:**
+- Agents are autonomous or headless (no browser)
+- Clients discover resources at runtime (open ecosystem)
+- You need cross-domain federation without pre-registration
+- Bearer token security is insufficient
+- You need progressive trust levels
+- You're building for MCP, agent frameworks, or multi-vendor toolchains

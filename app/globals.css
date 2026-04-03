@@ -1,0 +1,26 @@
+@import 'nextra-theme-docs/style.css';
+@import 'tailwindcss';
+
+:root {
+    --nextra-primary-hue: 220deg;
+    --nextra-primary-saturation: 80%;
+    --nextra-primary-lightness: 50%;
+    --nextra-bg: 250,250,250;
+    --nextra-content-width: 90rem;
+}
+
+.dark {
+    --nextra-primary-hue: 220deg;
+    --nextra-primary-saturation: 80%;
+    --nextra-primary-lightness: 60%;
+    --nextra-bg: 17,17,17;
+}
+
+html {
+    --nextra-navbar-height: 48px;
+    background: rgb(var(--nextra-bg));
+}
+
+::selection {
+    background: hsla(var(--nextra-primary-hue),var(--nextra-primary-saturation),var(--nextra-primary-lightness),.3);
+}

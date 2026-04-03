@@ -1,0 +1,22 @@
+# Signature-Key
+
+**Status:** Internet-Draft
+**Spec:** I-D.hardt-httpbis-signature-key
+
+The foundation layer. A standalone HTTP specification (not AAuth-specific) that defines the `Signature-Key` header for conveying public keying material alongside HTTP Message Signatures ([RFC 9421](https://www.rfc-editor.org/rfc/rfc9421)).
+
+## What It Does
+
+Provides a standard way for a signer to tell a verifier which key to use. When a client signs an HTTP request, the verifier needs the public key to validate the signature. The `Signature-Key` header conveys that key inline with the request.
+
+**Primitives provided:** key conveyance, signature verification bootstrapping
+
+## Why It Matters
+
+Without Signature-Key, the verifier must already know the signer's key — through pre-registration, a JWKS endpoint lookup, or some other out-of-band mechanism. Signature-Key makes HTTP Message Signatures self-contained: the signed request carries everything needed to verify it.
+
+This is the building block that all AAuth signing depends on.
+
+## Read the Spec
+
+- [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/)

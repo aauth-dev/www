@@ -1,0 +1,44 @@
+# AAuth Mission
+
+**Status:** Exploratory
+**Spec:** draft-hardt-aauth-mission
+
+Optional extension to the Protocol for multi-step agent workflows. Inspired by military Mission Command (*Auftragstaktik*) — communicate the objective, let the agent execute, evaluate each action against the approved intent.
+
+## What It Does
+
+### Mission Proposals
+
+An agent submits a **mission proposal** to its Mission Authority (MA) — typically its own auth server. The MA evaluates the proposal (potentially deferring for human review or engaging in clarification chat) and returns an approved mission, identified by the SHA-256 hash of the approved text.
+
+### Mission-Scoped Authorization
+
+As the agent works, it includes the mission identifier in each token request. The MA evaluates whether each resource access is consistent with the mission and can deny requests that fall outside scope.
+
+### Mission Control
+
+The administrative interface to the MA. Because the MA is in the authorization path for every mission action, it holds a complete audit trail:
+
+```
+10:00  Agent → flights.example      scope: search        granted
+10:02  Agent → flights.example      scope: fare.hold     granted
+10:05  Agent → hotels.example       scope: search        granted
+10:08  Agent → hotels.example       scope: reserve       granted
+10:12  Agent → restaurants.example  scope: book          granted
+10:15  Agent → payments.example     scope: charge        denied — outside mission scope
+```
+
+Users can **suspend** a mission (halting all access), **resume** it, or **revoke** it entirely.
+
+### The Analogy
+
+OAuth's model — pre-registered clients, static scopes, upfront consent — is *Befehlstaktik* (detailed command): specify every step in advance. This works when the environment is predictable.
+
+AAuth missions are *Auftragstaktik* (mission command): approve the objective, let the agent execute, intervene when necessary. As Moltke observed, no plan of operations extends with certainty beyond first contact.
+
+**Primitives provided:** scoped authorization contexts, centralized audit, mission lifecycle management
+
+## Read the Spec
+
+- [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-mission.html)
+- [Source (GitHub)](https://github.com/dickhardt/AAuth/blob/main/draft-hardt-aauth-mission.md)

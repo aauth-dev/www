@@ -1,0 +1,39 @@
+---
+title: Articles
+---
+
+# Blog & Articles
+
+Curated articles about AAuth, agent authentication, and the thinking behind the protocol.
+
+## Christian Posta
+
+### AAuth Deep Dives
+
+- [Deep Dive AAuth — Identity and Access Management for AI Agents](https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/) — Comprehensive walkthrough of the AAuth protocol.
+- [AAuth Full Demo](https://blog.christianposta.com/aauth-full-demo/) — Working end-to-end demo with Keycloak, Agentgateway, Java/Python/Rust.
+  - [Agent Identity with JWKS](https://blog.christianposta.com/aauth-full-demo/agent-identity-jwks.html)
+  - [Agent Authorization (Autonomous)](https://blog.christianposta.com/aauth-full-demo/agent-authorization-autonomous.html)
+  - [Agent Authorization (On Behalf Of)](https://blog.christianposta.com/aauth-full-demo/agent-authorization-on-behalf-of.html)
+  - [Apply Policy with Agentgateway](https://blog.christianposta.com/aauth-full-demo/apply-policy-agentgateway.html)
+
+### Agent Identity & Auth Series
+
+- [Do AI Agents Need Their Own Identity?](https://blog.christianposta.com/do-we-even-need-agent-identity/) — Whether AI agents require their own identity, separate from users.
+- [AI Agent Delegation — You Can't Delegate What You Don't Control](https://blog.christianposta.com/cracks-in-our-identity-foundations/) — How agents reveal weaknesses in current auth foundations.
+- [Explaining OAuth Delegation, "On Behalf Of", and Agent Identity](https://blog.christianposta.com/explaining-on-behalf-of-for-ai-agents/) — OAuth flows when the caller is an AI agent.
+- [Configuring A2A OAuth User Delegation](https://blog.christianposta.com/setting-up-a2a-oauth-user-delegation/) — OAuth 2.0 token exchange and delegation walkthrough.
+- [Inbound Auth for Agentcore With Agentgateway](https://blog.christianposta.com/inbound-auth-for-agentcore-with-agentgateway/) — Authorization policies for agent-to-agent communication.
+- [Mitigate Prompt Injection Attacks With A2AS and Agentgateway](https://blog.christianposta.com/mitigate-prompt-injection-attacks-with-a2as-and-agentgateway/) — Using gateway patterns to mitigate prompt injection.
+
+## Karl McGuinness
+
+A seven-part series on agent authority and delegation — foundational thinking behind AAuth's design. Available in the [AAuth specification repository](https://github.com/dickhardt/AAuth/tree/main/notes/Karl).
+
+1. **Agents Don't Need Your Passport** — Why treating agents as users fails
+2. **From Passports to Power of Attorney** — The delegation model agents actually need
+3. **Governing the Stay** — Scoping and constraining delegated authority
+4. **Mission-Bound OAuth** — Can OAuth be extended for agent missions?
+5. **Client Context and ID JAG** — Identity at the agent-gateway boundary
+6. **Mission Architecture on AAuth** — How AAuth's mission model works
+7. **Why Mission-Bound OAuth Might Be Wrong** — Why a new protocol is needed

@@ -1,0 +1,58 @@
+---
+title: AAuth — Authentication & Authorization for Autonomous Agents
+---
+
+# AAuth
+
+**Authentication & Authorization for Autonomous Agents**
+
+A protocol family for agent identity, resource access, and user delegation —
+designed for open ecosystems where pre-registration, browser redirects, and bearer tokens don't fit.
+
+[Read the Explainer](/explainer/) | [View the Specs](/specs/)
+
+***
+
+## Why AAuth?
+
+### No Pre-Registration
+
+Agents self-publish identity at HTTPS URLs. Any agent can interact with any resource on first contact — no admin portal, no client secrets, no onboarding friction.
+
+### Proof of Possession
+
+Every request is signed with HTTP Message Signatures. Every token is key-bound. Stolen tokens are worthless without the signing key.
+
+### Async by Design
+
+One pattern — `202 Accepted` + polling — handles immediate grants, user consent, headless agents, enterprise approval, and clarification chat.
+
+### Progressive Trust
+
+Resources declare the trust level they need: pseudonymous, identified, or fully authorized. Escalate within the same protocol — no switching.
+
+### Resource Identity
+
+Resources sign their own tokens, binding access challenges to their cryptographic identity. Prevents confused deputy attacks at the protocol level.
+
+### Multi-Hop Access
+
+Call chaining lets resources access downstream resources on behalf of the caller. Authorization passes downstream, interaction bubbles up.
+
+***
+
+## Specification Layers
+
+AAuth is defined by a family of layered specifications. Each layer builds on the one below it.
+
+| Layer | Spec | Status |
+|-------|------|--------|
+| 4b | [R3 — Rich Resource Requests](/specs/r3/) | Exploratory |
+| 4a | [Mission — Multi-step workflows](/specs/mission/) | Exploratory |
+| 3 | [AAuth Protocol](/specs/protocol/) | Internet-Draft |
+| 2 | [AAuth Headers](/specs/headers/) | Internet-Draft |
+| 1 | [Signature-Key](/specs/signature-key/) | Internet-Draft |
+
+***
+
+[TypeScript Implementation](https://github.com/hellocoop/AAuth) | [Articles & Deep Dives](/blog/) | [GitHub](https://github.com/dickhardt/AAuth)

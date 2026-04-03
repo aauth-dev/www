@@ -1,0 +1,36 @@
+# AAuth Protocol
+
+**Status:** Internet-Draft
+**Spec:** draft-hardt-aauth-protocol
+
+The main authorization protocol built on the Headers layer. Defines the token types, endpoints, and flows that make up AAuth.
+
+## What It Does
+
+### Three Token Types
+
+| Token | Issued By | Purpose |
+|-------|-----------|---------|
+| **Agent Token** (`agent+jwt`) | Agent Server | Binds a delegate's key to the agent's identity |
+| **Resource Token** (`resource+jwt`) | Resource | Access challenge binding the request to the resource's identity |
+| **Auth Token** (`auth+jwt`) | Auth Server | Grants access with user identity and scopes |
+
+### Unified Token Endpoint
+
+A single endpoint handles all authorization scenarios. When the response can't be immediate, the server returns `202 Accepted` with a `Location` header pointing to a pending URL. The agent polls until ready.
+
+### Key Features
+
+- **Deferred responses** — `202 Accepted` + polling for any async flow
+- **Clarification chat** — users can ask the agent questions during consent
+- **Call chaining** — resources access downstream resources on behalf of the caller
+- **Cross-domain AS federation** — an agent's AS can call a resource's AS
+- **Agent as audience** — SSO and first-party access use the same flow
+- **No refresh tokens** — expired tokens + signatures are sufficient for renewal
+
+**Primitives provided:** token issuance, federation, deferred authorization, user delegation
+
+## Read the Spec
+
+- [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-protocol.html)
+- [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol)

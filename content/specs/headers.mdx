@@ -1,0 +1,34 @@
+# AAuth Headers
+
+**Status:** Internet-Draft
+**Spec:** draft-hardt-aauth-headers
+
+Profiles HTTP Message Signatures + Signature-Key for the AAuth context. Defines two HTTP response headers that resources use to communicate authentication requirements and errors.
+
+## What It Does
+
+### AAuth-Requirement
+
+A response header that tells the agent what level of trust the resource needs:
+
+| Level | Meaning |
+|-------|---------|
+| `pseudonym` | Sign the request with any key (rate limiting, abuse mitigation) |
+| `identity` | Present a verified agent token (policy-based access) |
+| `interaction` | User consent needed — includes an interaction code |
+| `approval` | Auth server obtains approval directly (no agent UX) |
+
+### AAuth-Error
+
+A structured error header for signature and authentication failures, enabling agents to diagnose and recover from auth errors programmatically.
+
+**Primitives provided:** requirement signaling, signed request authentication, error reporting
+
+## Why It Matters
+
+Progressive trust is a core AAuth concept. The Headers layer is what makes it work — a resource can start with `pseudonym` and escalate to `identity` or `interaction` on any subsequent request, using the same protocol and headers throughout.
+
+## Read the Spec
+
+- [Editor's Copy](https://dickhardt.github.io/AAuth/draft-hardt-aauth-headers.html)
+- [IETF Datatracker](https://datatracker.ietf.org/doc/draft-hardt-aauth-headers)

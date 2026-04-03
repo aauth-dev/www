@@ -1,0 +1,3 @@
+# Redirect apex to www
+# Note: This is handled by Cloudflare DNS/Page Rules for the apex domain.
+# This file handles any remaining redirect cases for Cloudflare Pages.
