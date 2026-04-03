@@ -52,9 +52,8 @@ export default {
     type: 'page',
   },
   github: {
-    title: 'GitHub ↗',
+    title: 'GitHub',
     type: 'page',
     href: 'https://github.com/dickhardt/AAuth',
-    newWindow: true,
   },
 }
