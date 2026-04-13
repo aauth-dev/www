@@ -75,10 +75,13 @@
   │  HTTPSig w/ agent token │
   │────────────────────────>│
   │                         │
-  │  202 (interaction)      │
+  │  202 + Location         │
   │<────────────────────────│
   │                         │
   │  [user consents]        │
+  │                         │
+  │  GET Location           │
+  │────────────────────────>│
   │                         │
   │  200 OK + AAuth-Access  │
   │<────────────────────────│`
@@ -92,7 +95,7 @@
   │  HTTPSig w/ agent token      │
   │────────────────>│            │
   │                 │            │
-  │  resource_token │            │
+  │  401 + resource_token        │
   │<────────────────│            │
   │                 │            │
   │  resource_token + HTTPSig    │
@@ -116,7 +119,7 @@
   │  HTTPSig w/ agent token          │
   │─────────────>│       │           │
   │              │       │           │
-  │  resource_token      │           │
+  │  401 + resource_token            │
   │<─────────────│       │           │
   │              │       │           │
   │  resource_token + HTTPSig        │
@@ -360,6 +363,8 @@
 
 					<div class="mb-4 pl-4 border-l-2 border-[var(--color-resource)]">
 						<span class="text-[var(--color-resource)]">&larr; 202 Accepted</span>
+						<br />
+						<span class="text-[var(--color-text-dim)]">Location: /pending/abc123</span>
 						<br />
 						<span class="text-[var(--color-text-dim)]">AAuth-Requirement: requirement=interaction;</span>
 						<br />
