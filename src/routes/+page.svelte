@@ -263,7 +263,7 @@ ${participants}
 </section>
 
 <!-- Agents Are Different -->
-<section class="py-24 px-6">
+<section id="compare" class="py-24 px-6">
 	<div class="max-w-6xl mx-auto">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Agents Are Different</h2>
@@ -310,7 +310,7 @@ ${participants}
 </section>
 
 <!-- Compare -->
-<section id="compare" class="py-24 px-6">
+<section class="py-24 px-6">
 	<div class="max-w-5xl mx-auto">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Why Not OAuth or API Keys?</h2>
