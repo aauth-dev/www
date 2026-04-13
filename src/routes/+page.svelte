@@ -3,6 +3,7 @@
 	import InView from '$lib/components/InView.svelte';
 	import Mermaid from '$lib/components/Mermaid.svelte';
 	import DecryptText from '$lib/components/DecryptText.svelte';
+	import PrismaticBurst from '$lib/components/PrismaticBurst.svelte';
 
 	let playgroundTrigger = $state(0);
 	let getStartedTrigger = $state(0);
@@ -229,8 +230,19 @@ ${participants}
 <Nav />
 
 <!-- Hero -->
-<section class="min-h-screen flex items-center justify-center px-6 pt-16">
-	<div class="max-w-4xl mx-auto text-center">
+<section class="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
+	<div class="absolute inset-0 opacity-25 pointer-events-none">
+		<PrismaticBurst
+			intensity={1.8}
+			speed={0.4}
+			animationType="rotate3d"
+			distort={1.5}
+			rayCount={0}
+			colors={['#4ade80', '#38bdf8', '#a78bfa']}
+		/>
+	</div>
+
+	<div class="relative z-10 max-w-4xl mx-auto text-center">
 		<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] uppercase">
 			HTTP Clients Need <span class="text-[var(--color-accent)]">Their Own Identity</span>
 		</h1>
