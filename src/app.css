@@ -2,7 +2,8 @@
 
 @theme {
 	--font-sans: 'Inter', system-ui, sans-serif;
-	--font-mono: 'JetBrains Mono', monospace;
+	--font-mono: 'JetBrains Mono', ui-monospace, monospace;
+	--font-display: 'JetBrains Mono', ui-monospace, monospace;
 
 	--color-bg: #0a0a0f;
 	--color-bg-card: #12121a;
@@ -19,8 +20,8 @@
 	--color-as: #fb923c;
 	--color-person: #e4e4ed;
 
-	--color-accent: #3b82f6;
-	--color-accent-hover: #2563eb;
+	--color-accent: #00e5ff;
+	--color-accent-hover: #00b3cc;
 }
 
 * {
@@ -28,7 +29,41 @@
 }
 
 html {
+	color-scheme: dark;
 	scroll-behavior: smooth;
+}
+
+@property --glow-angle {
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: false;
+}
+
+.glow-card {
+	position: relative;
+	isolation: isolate;
+}
+
+.glow-card::before {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	z-index: -1;
+	border-radius: inherit;
+	padding: 1px;
+	background: radial-gradient(
+		180px circle at var(--mx, 50%) var(--my, 50%),
+		var(--color-accent),
+		transparent 70%
+	);
+	-webkit-mask:
+		linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: var(--glow-opacity, 0);
+	transition: opacity 0.2s;
+	pointer-events: none;
 }
 
 body {
@@ -37,4 +72,10 @@ body {
 	font-family: var(--font-sans);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-display,
+a.btn {
+	font-family: var(--font-display);
 }

@@ -1,6 +1,7 @@
 <script>
 	import Nav from '$lib/components/Nav.svelte';
 	import InView from '$lib/components/InView.svelte';
+	import Mermaid from '$lib/components/Mermaid.svelte';
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -53,92 +54,60 @@
 		}
 	];
 
+	const participants = `    participant A as Agent
+    participant R as Resource
+    participant P as PS
+    participant S as AS`;
+
 	const modes = [
 		{
 			name: 'Identity-Based',
 			parties: 'Agent + Resource',
 			desc: 'Agent signs requests. Resource verifies identity and applies its own access control. Replaces API keys.',
-			diagram: `Agent                    Resource
-  │                         │
-  │  HTTPSig w/ agent token │
-  │────────────────────────>│
-  │                         │
-  │  200 OK                 │
-  │<────────────────────────│`
+			diagram: `sequenceDiagram
+${participants}
+    A->>R: HTTPSig w/ agent token
+    R-->>A: 200 OK`
 		},
 		{
 			name: 'Resource-Managed',
 			parties: 'Agent + Resource',
 			desc: 'Resource handles authorization itself — via interaction, consent, or existing auth infrastructure.',
-			diagram: `Agent                    Resource
-  │                         │
-  │  HTTPSig w/ agent token │
-  │────────────────────────>│
-  │                         │
-  │  202 + Location         │
-  │<────────────────────────│
-  │                         │
-  │  [user consents]        │
-  │                         │
-  │  GET Location           │
-  │────────────────────────>│
-  │                         │
-  │  200 OK + AAuth-Access  │
-  │<────────────────────────│`
+			diagram: `sequenceDiagram
+${participants}
+    A->>R: HTTPSig w/ agent token
+    R-->>A: 202 Accepted + Location
+    Note over A,R: user consents
+    A->>R: GET Location
+    R-->>A: 200 OK + AAuth-Access`
 		},
 		{
 			name: 'PS-Managed',
 			parties: 'Agent + Resource + PS',
 			desc: 'Resource issues a resource token. PS issues an auth token carrying user identity and scope.',
-			diagram: `Agent            Resource       PS
-  │                 │            │
-  │  HTTPSig w/ agent token      │
-  │────────────────>│            │
-  │                 │            │
-  │  401 + resource_token        │
-  │<────────────────│            │
-  │                 │            │
-  │  resource_token + HTTPSig    │
-  │─────────────────────────────>│
-  │                              │
-  │  auth_token                  │
-  │<─────────────────────────────│
-  │                 │            │
-  │  HTTPSig w/ auth_token       │
-  │────────────────>│            │
-  │                 │            │
-  │  200 OK         │            │
-  │<────────────────│            │`
+			diagram: `sequenceDiagram
+${participants}
+    A->>R: HTTPSig w/ agent token
+    R-->>A: 401 + resource_token
+    A->>P: resource_token + HTTPSig
+    P-->>A: auth_token
+    A->>R: HTTPSig w/ auth_token
+    R-->>A: 200 OK`
 		},
 		{
 			name: 'Federated',
 			parties: 'Agent + Resource + PS + AS',
 			desc: 'Resource has its own Access Server. PS federates with AS to obtain the auth token across trust domains.',
-			diagram: `Agent        Resource   PS          AS
-  │              │       │           │
-  │  HTTPSig w/ agent token          │
-  │─────────────>│       │           │
-  │              │       │           │
-  │  401 + resource_token            │
-  │<─────────────│       │           │
-  │              │       │           │
-  │  resource_token + HTTPSig        │
-  │─────────────────────>│           │
-  │              │       │           │
-  │              │       │  federate │
-  │              │       │──────────>│
-  │              │       │           │
-  │              │       │ auth_token│
-  │              │       │<──────────│
-  │              │       │           │
-  │  auth_token          │           │
-  │<─────────────────────│           │
-  │              │       │           │
-  │  HTTPSig w/ auth_token           │
-  │─────────────>│       │           │
-  │              │       │           │
-  │  200 OK      │       │           │
-  │<─────────────│       │           │`
+			diagram: `sequenceDiagram
+${participants}
+    A->>R: HTTPSig w/ agent token
+    R-->>A: 401 + resource_token
+    A->>P: resource_token + HTTPSig
+    P->>S: federate
+    S-->>P: auth_token
+    P-->>A: auth_token
+    A->>R: HTTPSig w/ auth_token
+    R-->>A: 200 OK`
 		}
 	];
 
@@ -182,35 +151,71 @@
 	const platforms = [
 		{
 			name: 'Node.js / TypeScript',
-			desc: 'Reference implementation',
+			icon: 'nodedotjs',
+			desc: 'Reference SDK for agents and MCP servers with signed-request auth.',
 			href: 'https://github.com/hellocoop/AAuth',
 			available: true
 		},
 		{
 			name: 'Python',
-			desc: 'Full demo with Keycloak & Agentgateway',
+			icon: 'python',
+			desc: 'End-to-end A2A multi-agent demo with Keycloak and user consent.',
 			href: 'https://github.com/christian-posta/aauth-full-demo',
 			available: true
 		},
 		{
 			name: 'Java (Keycloak)',
-			desc: 'Keycloak AAuth extension',
+			icon: 'keycloak',
+			desc: 'Keycloak extension adding AAuth signature verification and grants.',
 			href: 'https://github.com/christian-posta/keycloak-aauth-extension',
 			available: true
 		},
 		{
 			name: 'Rust',
-			desc: 'Demo with Agentgateway',
+			icon: 'rust',
+			desc: 'Agentgateway routing signed agent-to-agent traffic.',
 			href: 'https://github.com/christian-posta/aauth-full-demo',
 			available: true
 		},
-		{
-			name: 'Go',
-			desc: 'Community contribution welcome',
-			href: 'https://github.com/hellocoop/aauth.dev/issues',
-			available: false
-		}
 	];
+
+	const deepDives = [
+		{
+			title: 'AAuth Full Demo',
+			author: 'Christian Posta',
+			desc: 'Working demo with Keycloak, Agentgateway, Java/Python/Rust',
+			href: 'https://blog.christianposta.com/aauth-full-demo/',
+			date: '2026-03-31'
+		},
+		{
+			title: 'Open-World OAuth Still Needs Mission Shaping',
+			author: 'Karl McGuinness',
+			desc: 'Open-world OAuth, discovery, and bounded authority across delegation chains',
+			href: 'https://notes.karlmcguinness.com/notes/open-world-oauth-still-needs-mission-shaping/',
+			date: '2026-03-21'
+		},
+		{
+			title: 'Mission Architecture on AAuth',
+			author: 'Karl McGuinness',
+			desc: 'Whether AAuth is the right protocol foundation for mission-bound authorization',
+			href: 'https://notes.karlmcguinness.com/notes/mission-architecture-on-aauth/',
+			date: '2026-03-15'
+		},
+		{
+			title: 'Deep Dive AAuth — Identity and Access Management for AI Agents',
+			author: 'Christian Posta',
+			desc: 'Comprehensive overview of AAuth architecture and design',
+			href: 'https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/',
+			date: '2026-02-17'
+		},
+		{
+			title: 'Do AI Agents Need Their Own Identity?',
+			author: 'Christian Posta',
+			desc: 'The case for independent agent identity',
+			href: 'https://blog.christianposta.com/do-we-even-need-agent-identity/',
+			date: '2025-06-02'
+		}
+	].sort((a, b) => b.date.localeCompare(a.date));
 </script>
 
 <Nav />
@@ -220,29 +225,29 @@
 	<div class="max-w-4xl mx-auto text-center">
 		<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
 			HTTP Clients Need<br />
-			<span class="bg-gradient-to-r from-[var(--color-agent)] to-[var(--color-ps)] bg-clip-text text-transparent">
+			<span class="text-[var(--color-accent)]">
 				Their Own Identity
 			</span>
 		</h1>
-		<p class="text-xl md:text-2xl text-[var(--color-text-muted)] max-w-3xl mx-auto mb-4 leading-relaxed">
-			AAuth gives every agent its own cryptographic identity.
+		<p class="text-xl md:text-2xl text-[var(--color-text-muted)] max-w-3xl mx-auto mb-12 leading-relaxed">
+			AAuth gives every agent its own cryptographic identity.<br />
 			No pre-registration. No shared secrets. No bearer tokens.
 		</p>
-		<p class="text-lg text-[var(--color-text-dim)] max-w-2xl mx-auto mb-12 leading-relaxed">
+		<!-- <p class="text-lg text-[var(--color-text-dim)] max-w-2xl mx-auto mb-12 leading-relaxed">
 			A domain, static metadata, and a JWKS. That's it. This is the foundation
 			that authorization, governance, and federation build on.
-		</p>
+		</p> -->
 
 		<div class="flex justify-center gap-4 flex-wrap mb-16">
 			<a
 				href="https://playground.aauth.dev"
-				class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white font-medium no-underline transition-colors"
+				class="font-display inline-flex items-center gap-2 px-7 py-3.5 rounded-lg bg-[var(--color-accent)] text-black font-medium no-underline hover:scale-[1.02]"
 			>
 				<span class="font-mono text-sm">&#9654;</span> Try the Playground
 			</a>
 			<a
 				href="#get-started"
-				class="inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-border-hover)] text-[var(--color-text)] font-medium no-underline transition-colors"
+				class="font-display inline-flex items-center gap-2 px-7 py-3.5 rounded-lg border border-[var(--color-accent)] text-[var(--color-accent)] font-medium no-underline hover:scale-[1.02]"
 			>
 				See Implementations
 			</a>
@@ -262,23 +267,40 @@
 	<div class="max-w-6xl mx-auto">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Agents Are Different</h2>
-			<p class="text-center text-[var(--color-text-muted)] max-w-2xl mx-auto mb-16 text-lg">
-				Agents discover resources at runtime. They need authorization mid-task.
-				A protocol designed for pre-registered clients with fixed integrations cannot serve them.
+			<p class="text-center text-[var(--color-text-muted)] max-w-4xl mx-auto mb-16 text-lg">
+				Agents discover resources at runtime and need authorization mid-task.<br />
+				Protocols built for pre-registered clients with fixed integrations can't keep up.
 			</p>
 		</InView>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+		<div
+			class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+			onmousemove={(e) => {
+				const cards = e.currentTarget.querySelectorAll('.glow-card');
+				cards.forEach((card) => {
+					const r = card.getBoundingClientRect();
+					const mx = e.clientX - r.left;
+					const my = e.clientY - r.top;
+					card.style.setProperty('--mx', `${mx}px`);
+					card.style.setProperty('--my', `${my}px`);
+					const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+					const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+					const dist = Math.hypot(dx, dy);
+					card.style.setProperty('--glow-opacity', dist < 120 ? '1' : '0');
+				});
+			}}
+			onmouseleave={(e) => {
+				e.currentTarget.querySelectorAll('.glow-card').forEach((c) => {
+					c.style.setProperty('--glow-opacity', '0');
+				});
+			}}
+		>
 			{#each features as feature, i}
 				<InView class="delay-{i}">
 					<div
-						class="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-hover)] transition-colors group"
+						class="glow-card p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] cursor-default select-none"
 					>
-						<div
-							class="w-1 h-8 rounded-full mb-4 transition-all group-hover:h-10"
-							style="background: {feature.color}"
-						></div>
-						<h3 class="text-lg font-semibold mb-2">{feature.title}</h3>
+						<h3 class="text-lg font-semibold mb-2 font-mono"><span class="text-[var(--color-accent)]">&gt;</span> {feature.title}</h3>
 						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">{feature.desc}</p>
 					</div>
 				</InView>
@@ -293,7 +315,7 @@
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4">How AAuth Works</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-2xl mx-auto mb-4 text-lg">
-				Four access modes. Each adds parties and capabilities.
+				Four access modes. Each adds parties and capabilities.<br />
 				Adoption does not require coordination between parties.
 			</p>
 		</InView>
@@ -303,10 +325,10 @@
 				{#each modes as mode, i}
 					<button
 						onclick={() => (activeMode = i)}
-						class="px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer
+						class="px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border
 							{activeMode === i
-							? 'bg-[var(--color-accent)] text-white'
-							: 'bg-[var(--color-bg-card)] text-[var(--color-text-muted)] border border-[var(--color-border)] hover:border-[var(--color-border-hover)]'}"
+							? 'bg-[var(--color-accent)] text-black border-transparent'
+							: 'bg-[var(--color-bg-card)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-border-hover)]'}"
 					>
 						{mode.name}
 					</button>
@@ -323,7 +345,11 @@
 					</div>
 					<div class="p-6">
 						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
-						<pre class="font-mono text-sm leading-relaxed overflow-x-auto text-[var(--color-text-muted)] bg-[var(--color-bg-code)] rounded-lg p-5"><code>{modes[activeMode].diagram}</code></pre>
+						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 overflow-x-auto min-h-[520px] flex items-start">
+						{#key activeMode}
+							<Mermaid chart={modes[activeMode].diagram} />
+						{/key}
+					</div>
 					</div>
 				</div>
 			</div>
@@ -371,10 +397,6 @@
 						<span class="text-[var(--color-text-dim)]">  url="https://resource.example/consent/abc"; code="ABCD1234"</span>
 					</div>
 
-					<div class="mb-4 text-[var(--color-ps)] text-center text-xs tracking-wider uppercase">
-						user reviews &middot; asks "why do you need this?" &middot; agent explains
-					</div>
-
 					<div class="mb-4">
 						<span class="text-[var(--color-agent)]">GET</span>
 						<span class="text-[var(--color-text-muted)]"> /pending/abc123</span>
@@ -392,7 +414,7 @@
 </section>
 
 <!-- Specifications -->
-<section id="specs" class="py-24 px-6">
+<section id="specs" class="py-24 px-6 hidden">
 	<div class="max-w-4xl mx-auto">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Specifications</h2>
@@ -443,16 +465,41 @@
 			</p>
 		</InView>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+		<div
+			class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto"
+			onmousemove={(e) => {
+				const cards = e.currentTarget.querySelectorAll('.glow-card');
+				cards.forEach((card) => {
+					const r = card.getBoundingClientRect();
+					card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+					card.style.setProperty('--my', `${e.clientY - r.top}px`);
+					const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+					const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+					card.style.setProperty('--glow-opacity', Math.hypot(dx, dy) < 120 ? '1' : '0');
+				});
+			}}
+			onmouseleave={(e) => {
+				e.currentTarget.querySelectorAll('.glow-card').forEach((c) => {
+					c.style.setProperty('--glow-opacity', '0');
+				});
+			}}
+		>
 			{#each platforms as platform}
-				<InView>
+				<InView class="h-full">
 					<a
 						href={platform.href}
 						target="_blank"
 						rel="noopener"
-						class="block p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-hover)] transition-colors no-underline"
+						class="glow-card block h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline hover:scale-[1.02]"
 					>
-						<h3 class="font-semibold mb-1">
+						<h3 class="font-semibold mb-1 flex items-center gap-2">
+							<img
+								src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`}
+								alt=""
+								width="18"
+								height="18"
+								class="inline-block"
+							/>
 							{platform.name}
 							{#if !platform.available}
 								<span class="text-xs text-[var(--color-text-dim)] font-normal ml-2">wanted</span>
@@ -464,32 +511,6 @@
 			{/each}
 		</div>
 
-		<InView>
-			<div class="text-center mt-12">
-				<p class="text-[var(--color-text-muted)] mb-4">
-					Don't see your platform?
-				</p>
-				<div class="flex justify-center gap-4 flex-wrap">
-					<a
-						href="https://github.com/hellocoop/aauth.dev/issues"
-						target="_blank"
-						rel="noopener"
-						class="text-sm text-[var(--color-accent)] hover:underline"
-					>
-						Open an issue
-					</a>
-					<span class="text-[var(--color-text-dim)]">&middot;</span>
-					<a
-						href="https://github.com/hellocoop/aauth.dev"
-						target="_blank"
-						rel="noopener"
-						class="text-sm text-[var(--color-accent)] hover:underline"
-					>
-						Submit a PR
-					</a>
-				</div>
-			</div>
-		</InView>
 	</div>
 </section>
 
@@ -504,33 +525,69 @@
 		</InView>
 
 		<InView>
-			<div class="space-y-3">
+			<div
+				class="space-y-3"
+				onmousemove={(e) => {
+					const cards = e.currentTarget.querySelectorAll('.glow-card');
+					cards.forEach((card) => {
+						const r = card.getBoundingClientRect();
+						card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+						card.style.setProperty('--my', `${e.clientY - r.top}px`);
+						const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+						const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+						card.style.setProperty('--glow-opacity', Math.hypot(dx, dy) < 120 ? '1' : '0');
+					});
+				}}
+				onmouseleave={(e) => {
+					e.currentTarget.querySelectorAll('.glow-card').forEach((c) => {
+						c.style.setProperty('--glow-opacity', '0');
+					});
+				}}
+			>
+				{#each deepDives as post}
+					<a
+						href={post.href}
+						target="_blank"
+						rel="noopener"
+						class="glow-card block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline hover:scale-[1.02]"
+					>
+						<div class="flex items-start justify-between gap-4 mb-1">
+							<h3 class="font-semibold">{post.title}</h3>
+							<span class="text-xs text-[var(--color-text-dim)] shrink-0 mt-1 font-mono">{post.date}</span>
+						</div>
+						<p class="text-sm text-[var(--color-text-muted)]">{post.author} — {post.desc}</p>
+					</a>
+				{/each}
+			</div>
+		</InView>
+	</div>
+</section>
+
+<!-- Contribute -->
+<section class="py-20 px-6">
+	<div class="max-w-3xl mx-auto text-center">
+		<InView>
+			<h2 class="text-2xl md:text-3xl font-bold mb-3">Contribute</h2>
+			<p class="text-[var(--color-text-muted)] mb-6">
+				Found something missing or want to help improve AAuth?
+			</p>
+			<div class="flex justify-center gap-4 flex-wrap">
 				<a
-					href="https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/"
+					href="https://github.com/hellocoop/aauth.dev/issues"
 					target="_blank"
 					rel="noopener"
-					class="block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-hover)] transition-colors no-underline"
+					class="text-sm text-[var(--color-accent)] hover:underline"
 				>
-					<h3 class="font-semibold mb-1">Deep Dive AAuth — Identity and Access Management for AI Agents</h3>
-					<p class="text-sm text-[var(--color-text-muted)]">Christian Posta — Comprehensive overview of AAuth architecture and design</p>
+					Open an issue
 				</a>
+				<span class="text-[var(--color-text-dim)]">&middot;</span>
 				<a
-					href="https://blog.christianposta.com/aauth-full-demo/"
+					href="https://github.com/hellocoop/aauth.dev"
 					target="_blank"
 					rel="noopener"
-					class="block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-hover)] transition-colors no-underline"
+					class="text-sm text-[var(--color-accent)] hover:underline"
 				>
-					<h3 class="font-semibold mb-1">AAuth Full Demo</h3>
-					<p class="text-sm text-[var(--color-text-muted)]">Christian Posta — Working demo with Keycloak, Agentgateway, Java/Python/Rust</p>
-				</a>
-				<a
-					href="https://blog.christianposta.com/do-we-even-need-agent-identity/"
-					target="_blank"
-					rel="noopener"
-					class="block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] hover:border-[var(--color-border-hover)] transition-colors no-underline"
-				>
-					<h3 class="font-semibold mb-1">Do AI Agents Need Their Own Identity?</h3>
-					<p class="text-sm text-[var(--color-text-muted)]">Christian Posta — The case for independent agent identity</p>
+					Submit a PR
 				</a>
 			</div>
 		</InView>
@@ -547,6 +604,9 @@
 					Agent identity, resource access, and user delegation
 					for open ecosystems.
 				</p>
+				<p class="text-sm text-[var(--color-text-muted)] mt-3">
+					Founding sponsor: <a href="https://www.linkedin.com/in/geffenpo/" target="_blank" rel="noopener" class="hover:text-white transition-colors">Geffen Posner</a>
+				</p>
 			</div>
 			<div class="flex gap-12 text-sm">
 				<div class="space-y-3">
@@ -562,9 +622,6 @@
 					<a href="https://github.com/hellocoop/aauth.dev/issues" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Contribute</a>
 				</div>
 			</div>
-		</div>
-		<div class="text-sm text-[var(--color-text-dim)] text-center">
-			Founding sponsor: <a href="https://www.linkedin.com/in/geffenpo/" target="_blank" rel="noopener" class="text-[var(--color-text-muted)] hover:text-white transition-colors">Geffen Posner</a>
 		</div>
 	</div>
 </footer>
