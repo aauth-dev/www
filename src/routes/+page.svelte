@@ -70,7 +70,7 @@
 		{
 			name: 'Identity-Based',
 			parties: 'Agent + Resource',
-			desc: 'Agent signs requests. Resource verifies identity and applies its own access control. Replaces API keys.',
+			desc: 'Agent signs every request. Resource verifies identity and applies its own access control. Replaces API keys.',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token
@@ -79,7 +79,7 @@ ${participants}
 		{
 			name: 'Resource-Managed',
 			parties: 'Agent + Resource',
-			desc: 'Resource handles authorization itself — via interaction, consent, or existing auth infrastructure.',
+			desc: 'Resource handles authorization itself — via user interaction, consent, or an existing OAuth / OIDC provider.',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token
@@ -93,7 +93,7 @@ ${participants}
 		{
 			name: 'PS-Managed',
 			parties: 'Agent + Resource + PS',
-			desc: 'Resource issues a resource token. PS issues an auth token carrying user identity and scope.',
+			desc: 'Resource issues a resource token. PS issues an auth token (consent at PS may apply).',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token<br/>POST /authorize\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u200D
@@ -154,6 +154,20 @@ ${participants}
 
 	const platforms = [
 		{
+			name: 'Specifications',
+			icon: 'github',
+			desc: 'The Internet-Drafts defining the AAuth protocol and signatures.',
+			href: 'https://github.com/dickhardt/AAuth',
+			available: true
+		},
+		{
+			name: 'Playground',
+			iconGlyph: '>',
+			desc: 'Interactive in-browser demo of signed requests and access modes.',
+			href: 'https://playground.aauth.dev',
+			available: true
+		},
+		{
 			name: 'Node.js / TypeScript',
 			icon: 'nodedotjs',
 			desc: 'Reference SDK for agents and MCP servers with signed-request auth.',
@@ -165,20 +179,6 @@ ${participants}
 			icon: 'python',
 			desc: 'End-to-end A2A multi-agent demo with Keycloak and user consent.',
 			href: 'https://github.com/christian-posta/aauth-full-demo',
-			available: true
-		},
-		{
-			name: 'Playground',
-			iconGlyph: '>',
-			desc: 'Interactive in-browser demo of signed requests and access modes.',
-			href: 'https://playground.aauth.dev',
-			available: true
-		},
-		{
-			name: 'Specifications',
-			icon: 'github',
-			desc: 'The Internet-Drafts defining the AAuth protocol and signatures.',
-			href: 'https://github.com/dickhardt/AAuth',
 			available: true
 		}
 	];
@@ -363,14 +363,20 @@ ${participants}
 						<tr class="border-b border-[var(--color-border)]">
 							<td class="p-4 text-[var(--color-text-dim)] font-medium">Credential</td>
 							<td class="p-4">Shared secret</td>
-							<td class="p-4">Secret, PKCE, or mTLS + bearer token</td>
-							<td class="p-4 text-[var(--color-text)]">Agent's own signing key</td>
+							<td class="p-4">Client auth + bearer token</td>
+							<td class="p-4 text-[var(--color-text)]">Agent's signing key</td>
 						</tr>
 						<tr class="border-b border-[var(--color-border)]">
 							<td class="p-4 text-[var(--color-text-dim)] font-medium">Presentation</td>
 							<td class="p-4">Bearer</td>
 							<td class="p-4">Bearer (DPoP optional)</td>
 							<td class="p-4 text-[var(--color-text)]">HTTP Message Signature</td>
+						</tr>
+						<tr class="border-b border-[var(--color-border)]">
+							<td class="p-4 text-[var(--color-text-dim)] font-medium">Verification</td>
+							<td class="p-4">Pre-shared per service</td>
+							<td class="p-4">Via the AS</td>
+							<td class="p-4 text-[var(--color-text)]">Any party via JWKS</td>
 						</tr>
 						<tr>
 							<td class="p-4 text-[var(--color-text-dim)] font-medium">User delegation</td>
@@ -448,6 +454,7 @@ ${participants}
 					<li><span class="text-[var(--color-text-muted)]">agent_token</span> establishes the agent's identity</li>
 					<li><span class="text-[var(--color-text-muted)]">resource_token</span> describes the access needed</li>
 					<li><span class="text-[var(--color-text-muted)]">auth_token</span> grants an agent access to a resource</li>
+					<li><span class="text-[var(--color-text-muted)]">jwks_uri</span> PS's JWKS endpoint, discovered via well-known metadata</li>
 					<li><span class="text-[var(--color-text-muted)]">PS</span> Person Server &middot; <span class="text-[var(--color-text-muted)]">AS</span> Access Server</li>
 				</ul>
 			</div>

@@ -59,10 +59,12 @@ export default {
 
 		// llms.txt is always served from static assets (no negotiation);
 		// rewrite Content-Type so browsers treat it as UTF-8 and em-dashes render correctly.
+		// Force revalidation so previously-cached responses without charset are evicted.
 		if (url.pathname === '/llms.txt') {
 			const res = await env.ASSETS.fetch(request);
 			const headers = new Headers(res.headers);
 			headers.set('Content-Type', 'text/plain; charset=utf-8');
+			headers.set('Cache-Control', 'no-cache, must-revalidate');
 			return new Response(res.body, { status: res.status, headers });
 		}
 
