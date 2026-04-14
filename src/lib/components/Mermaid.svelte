@@ -102,9 +102,25 @@
 					}
 				}
 			});
-			const targetW = Math.max(vb.width, 900);
+			const targetW = Math.max(vb.width, 1200);
 			svgEl.setAttribute('viewBox', `${vb.x} ${vb.y} ${targetW} ${targetH}`);
 			svgEl.setAttribute('height', String(targetH));
+
+			// HACK: hide any message whose label starts with our zero-width-space marker.
+			// We use this to add invisible PS->S/S->P legs to non-Federated diagrams so
+			// the PS-AS gap stretches consistently across all four tabs.
+			const HIDDEN = '\u200B';
+			svgEl.querySelectorAll('text').forEach((t) => {
+				if ((t.textContent || '').includes(HIDDEN)) {
+					t.style.opacity = '0';
+					// Hide the message arrow line(s) drawn just before this text element
+					let prev = t.previousElementSibling;
+					while (prev && (prev.tagName === 'line' || prev.tagName === 'path')) {
+						prev.style.opacity = '0';
+						prev = prev.previousElementSibling;
+					}
+				}
+			});
 		});
 	});
 </script>

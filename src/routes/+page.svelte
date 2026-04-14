@@ -83,11 +83,11 @@ ${participants}
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token
-    R-->>A: 202 (interaction required)
+    R-->>A: 202<br/>(interaction required)
     Note over A,R: user completes interaction
     A->>R: GET pending URL
-    R-->>A: 200 OK + AAuth-Access
-    A->>R: HTTPSig w/ agent token<br/>Authorization: AAuth opaque-token
+    R-->>A: 200 OK<br/>AAuth-Access:<br/>opaque-token
+    A->>R: HTTPSig w/ agent token<br/>Authorization:<br/>AAuth opaque-token
     R-->>A: 200 OK`
 		},
 		{
@@ -97,10 +97,10 @@ ${participants}
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token<br/>POST /authorize
-    R-->>A: resource_token<br/>(aud = PS)
+    R-->>A: resource_token<br/>(aud = PS URL)
     A->>P: HTTPSig w/ agent token<br/>POST /token<br/>w/ resource_token
     P-->>A: auth_token
-    A->>R: HTTPSig w/ auth token<br/>GET /api
+    A->>R: HTTPSig w/ auth_token<br/>GET /api/documents
     R-->>A: 200 OK`
 		},
 		{
@@ -110,12 +110,12 @@ ${participants}
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token<br/>POST /authorize
-    R-->>A: resource_token<br/>(aud = AS)
+    R-->>A: resource_token<br/>(aud = AS URL)
     A->>P: HTTPSig w/ agent token<br/>POST /token<br/>w/ resource_token
     P->>S: HTTPSig w/ jwks_uri<br/>POST /token<br/>w/ resource_token
     S-->>P: auth_token
     P-->>A: auth_token
-    A->>R: HTTPSig w/ auth token<br/>GET /api
+    A->>R: HTTPSig w/ auth_token<br/>GET /api/documents
     R-->>A: 200 OK`
 		}
 	];
@@ -407,11 +407,13 @@ ${participants}
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
 					<div class="p-6">
 						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
-						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 min-h-[480px] flex items-start overflow-x-auto md:overflow-hidden">
-						{#key activeMode}
-							<Mermaid chart={modes[activeMode].diagram} />
-						{/key}
-					</div>
+						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 min-h-[480px] overflow-x-auto md:overflow-hidden">
+							{#each modes as mode, i}
+								<div class="w-full {i === activeMode ? '' : 'hidden'}">
+									<Mermaid chart={mode.diagram} />
+								</div>
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
