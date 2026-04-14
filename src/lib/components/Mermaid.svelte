@@ -49,8 +49,8 @@
 					labelBoxBorderColor: '#2e2e42',
 					labelTextColor: '#e4e4ed',
 					loopTextColor: '#e4e4ed',
-					noteBkgColor: '#1a1a25',
-					noteBorderColor: '#2e2e42',
+					noteBkgColor: '#2e2844',
+					noteBorderColor: '#4b3f7a',
 					noteTextColor: '#e4e4ed',
 					activationBkgColor: '#2e2e42',
 					activationBorderColor: '#55556a',
@@ -71,18 +71,39 @@
 	$effect(() => {
 		svg;
 		if (!container) return;
-		queueMicrotask(() => {
+		requestAnimationFrame(() => {
 			const svgEl = container.querySelector('svg');
 			if (!svgEl) return;
 			svgEl.style.maxWidth = '';
 			const vb = svgEl.viewBox?.baseVal;
 			if (!vb) return;
-			const targetH = 520;
-			const actorLines = svgEl.querySelectorAll('line.actor-line, .actor-line');
-			actorLines.forEach((line) => {
-				line.setAttribute('y2', String(targetH));
+			const targetH = Math.max(vb.height, 560);
+			// Extend lifelines: any line or path that's clearly vertical and long
+			svgEl.querySelectorAll('line').forEach((line) => {
+				const y1 = parseFloat(line.getAttribute('y1'));
+				const y2 = parseFloat(line.getAttribute('y2'));
+				const x1 = parseFloat(line.getAttribute('x1'));
+				const x2 = parseFloat(line.getAttribute('x2'));
+				if (!isNaN(y1) && !isNaN(y2) && Math.abs(x1 - x2) < 2 && y2 - y1 > 50) {
+					line.setAttribute('y2', String(targetH));
+				}
 			});
-			svgEl.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.width} ${targetH}`);
+			svgEl.querySelectorAll('path').forEach((p) => {
+				const d = p.getAttribute('d') || '';
+				// Simple vertical path like "M x y L x y2" with tall span
+				const m = d.match(/^\s*M\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*L\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*$/);
+				if (m) {
+					const x1 = parseFloat(m[1]);
+					const y1 = parseFloat(m[2]);
+					const x2 = parseFloat(m[3]);
+					const y2 = parseFloat(m[4]);
+					if (Math.abs(x1 - x2) < 2 && y2 - y1 > 50) {
+						p.setAttribute('d', `M ${x1} ${y1} L ${x1} ${targetH}`);
+					}
+				}
+			});
+			const targetW = Math.max(vb.width, 900);
+			svgEl.setAttribute('viewBox', `${vb.x} ${vb.y} ${targetW} ${targetH}`);
 			svgEl.setAttribute('height', String(targetH));
 		});
 	});

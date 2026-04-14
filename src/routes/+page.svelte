@@ -83,10 +83,12 @@ ${participants}
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token
-    R-->>A: 202 + Location
-    Note over A,R: user interacts
-    A->>R: GET Location
-    R-->>A: 200 + AAuth-Access`
+    R-->>A: 202 (interaction required)
+    Note over A,R: user completes interaction
+    A->>R: GET pending URL
+    R-->>A: 200 OK + AAuth-Access
+    A->>R: HTTPSig w/ agent token<br/>Authorization: AAuth opaque-token
+    R-->>A: 200 OK`
 		},
 		{
 			name: 'PS-Managed',
@@ -94,11 +96,11 @@ ${participants}
 			desc: 'Resource issues a resource token. PS issues an auth token carrying user identity and scope.',
 			diagram: `sequenceDiagram
 ${participants}
-    A->>R: HTTPSig w/ agent token
-    R-->>A: 401 + resource_token
-    A->>P: resource_token + HTTPSig
+    A->>R: HTTPSig w/ agent token<br/>POST /authorize
+    R-->>A: resource_token<br/>(aud = PS)
+    A->>P: HTTPSig w/ agent token<br/>POST /token<br/>w/ resource_token
     P-->>A: auth_token
-    A->>R: HTTPSig w/ auth_token
+    A->>R: HTTPSig w/ auth token<br/>GET /api
     R-->>A: 200 OK`
 		},
 		{
@@ -107,13 +109,13 @@ ${participants}
 			desc: 'Resource has its own Access Server. PS federates with AS to obtain the auth token across trust domains.',
 			diagram: `sequenceDiagram
 ${participants}
-    A->>R: HTTPSig w/ agent token
-    R-->>A: 401 + resource_token
-    A->>P: resource_token + HTTPSig
-    P->>S: POST /token
+    A->>R: HTTPSig w/ agent token<br/>POST /authorize
+    R-->>A: resource_token<br/>(aud = AS)
+    A->>P: HTTPSig w/ agent token<br/>POST /token<br/>w/ resource_token
+    P->>S: HTTPSig w/ jwks_uri<br/>POST /token<br/>w/ resource_token
     S-->>P: auth_token
     P-->>A: auth_token
-    A->>R: HTTPSig w/ auth_token
+    A->>R: HTTPSig w/ auth token<br/>GET /api
     R-->>A: 200 OK`
 		}
 	];
@@ -123,39 +125,30 @@ ${participants}
 	const specs = [
 		{
 			name: 'AAuth Protocol',
-			layer: 'Layer 3',
 			status: 'Internet-Draft',
 			href: 'https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol',
 			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-protocol.html',
 			desc: 'The authorization protocol for agent-to-resource access. Four access modes, three token types, agent governance, missions, clarification chat, and call chaining.',
-			primary: true
-		},
-		{
-			name: 'AAuth Headers',
-			layer: 'Layer 2',
-			status: 'Internet-Draft',
-			href: 'https://datatracker.ietf.org/doc/draft-hardt-aauth-headers/',
-			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-headers.html',
-			desc: 'HTTP response headers used across AAuth: AAuth-Requirement (what the resource needs), AAuth-Access (opaque access token), and AAuth-Error (structured error reporting).',
-			primary: false
+			primary: true,
+			indent: false
 		},
 		{
 			name: 'HTTP Signature Keys',
-			layer: 'Layer 1',
 			status: 'Internet-Draft',
 			href: 'https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/',
 			editorsCopy: 'https://dickhardt.github.io/signature-key/draft-hardt-httpbis-signature-key.html',
 			desc: 'Foundation layer. Well-known key discovery, the Signature-Key header for conveying public keying material alongside HTTP Message Signatures.',
-			primary: false
+			primary: false,
+			indent: true
 		},
 		{
 			name: 'R3 — Rich Resource Requests',
-			layer: 'Extension',
 			status: 'Exploratory',
 			href: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html',
 			editorsCopy: null,
 			desc: 'Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL).',
-			primary: false
+			primary: false,
+			indent: true
 		}
 	];
 
@@ -175,10 +168,10 @@ ${participants}
 			available: true
 		},
 		{
-			name: 'Java (Keycloak)',
-			icon: 'keycloak',
-			desc: 'Keycloak extension adding AAuth signature verification and grants.',
-			href: 'https://github.com/christian-posta/keycloak-aauth-extension',
+			name: 'Playground',
+			iconGlyph: '>',
+			desc: 'Interactive in-browser demo of signed requests and access modes.',
+			href: 'https://playground.aauth.dev',
 			available: true
 		},
 	];
@@ -229,8 +222,8 @@ ${participants}
 
 <Nav />
 
-<!-- Hero -->
-<section class="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
+<!-- Hero (pinned — content below scrolls over it) -->
+<section class="sticky top-0 h-screen flex items-center justify-center px-6 pt-16 overflow-hidden z-0">
 	<div class="absolute inset-0 opacity-25 pointer-events-none">
 		<PrismaticBurst
 			intensity={1.8}
@@ -281,6 +274,9 @@ ${participants}
 		</div>
 	</div>
 </section>
+
+<!-- Scrolling content covers the fixed hero background -->
+<div class="relative z-10 bg-[var(--color-bg)] shadow-[0_-24px_48px_-12px_rgba(0,0,0,0.8)]">
 
 <!-- Agents Are Different -->
 <section id="compare" class="py-14 md:py-24 px-6">
@@ -411,7 +407,7 @@ ${participants}
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
 					<div class="p-6">
 						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
-						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 h-[420px] flex items-start overflow-x-auto md:overflow-hidden">
+						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 min-h-[480px] flex items-start overflow-x-auto md:overflow-hidden">
 						{#key activeMode}
 							<Mermaid chart={modes[activeMode].diagram} />
 						{/key}
@@ -421,9 +417,9 @@ ${participants}
 			</div>
 			<div class="mt-4 text-xs text-center text-[var(--color-text-dim)] space-y-1 font-mono">
 				<p>
-					<span class="text-[var(--color-text-muted)]">agent_token</span> identifies the agent &middot;
-					<span class="text-[var(--color-text-muted)]">resource_token</span> is the resource's challenge &middot;
-					<span class="text-[var(--color-text-muted)]">auth_token</span> grants access
+					<span class="text-[var(--color-text-muted)]">agent_token</span> establishes the agent's identity &middot;
+					<span class="text-[var(--color-text-muted)]">resource_token</span> describes the access needed &middot;
+					<span class="text-[var(--color-text-muted)]">auth_token</span> grants an agent access to a resource
 				</p>
 				<p>PS = Person Server &middot; AS = Access Server</p>
 			</div>
@@ -431,60 +427,24 @@ ${participants}
 	</div>
 </section>
 
-<!-- The 202 Pattern -->
+<!-- The 202 Pattern (commented out — redundant with Resource-Managed diagram)
 <section class="py-14 md:py-24 px-6">
 	<div class="max-w-4xl mx-auto">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">One Pattern for Everything</h2>
+			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">On the Wire</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-2xl mx-auto mb-12 text-lg">
-				<code class="font-mono text-[var(--color-resource)] bg-[var(--color-bg-code)] px-2 py-1 rounded">202 Accepted</code>
-				+ polling handles user consent, enterprise approval, headless agents, and clarification chat — everything that isn't immediate.
+				The Resource-Managed flow as raw HTTP — showing Signature-Key, AAuth-Requirement, and AAuth-Access headers.
 			</p>
 		</InView>
-
 		<InView>
-			<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
-				<div class="p-6 font-mono text-sm leading-loose">
-					<div class="log-line mb-4">
-						<span class="text-[var(--color-agent)]">POST</span>
-						<span class="text-[var(--color-text-muted)]"> /api/resource </span>
-						<span class="text-[var(--color-text-dim)]">HTTP/1.1</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">Signature-Key: sig=jwt; jwt="eyJ...agent-token"</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">Signature: sig1=:base64...:</span>
-					</div>
-
-					<div class="log-line mb-4 pl-4 border-l-2 border-[var(--color-resource)]">
-						<span class="text-[var(--color-resource)]">&larr; 202 Accepted</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">Location: https://resource.example/pending/abc123</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">AAuth-Requirement: requirement=interaction;</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">  url="https://resource.example/consent/abc"; code="ABCD1234"</span>
-					</div>
-
-					<div class="log-line mb-4">
-						<span class="text-[var(--color-agent)]">GET</span>
-						<span class="text-[var(--color-text-muted)]"> /pending/abc123 </span>
-						<span class="text-[var(--color-text-dim)]">HTTP/1.1</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">Signature-Key: sig=jwt; jwt="eyJ...agent-token"</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">Signature: sig1=:base64...:</span>
-					</div>
-
-					<div class="log-line pl-4 border-l-2 border-[var(--color-resource)]">
-						<span class="text-[var(--color-resource)]">&larr; 200 OK</span>
-						<br />
-						<span class="text-[var(--color-text-dim)]">AAuth-Access: opaque-access-token</span>
-					</div>
-				</div>
+			<div class="rounded-xl border bg-[var(--color-bg-card)] overflow-hidden p-6 font-mono text-sm leading-loose">
+				[wire example removed]
 			</div>
 		</InView>
 	</div>
 </section>
+-->
+
 
 <!-- Specifications -->
 <section id="specs" class="py-14 md:py-24 px-6">
@@ -492,7 +452,7 @@ ${participants}
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">Specifications</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-3xl mx-auto mb-12 text-lg">
-				Three drafts stack: <span class="text-[var(--color-text)]">Protocol</span> defines tokens, access modes, and federation; <span class="text-[var(--color-text)]">Headers</span> profiles the signature headers it uses; <span class="text-[var(--color-text)]">Signature Keys</span> underpins both with the key-conveyance header. R3 is an optional extension.
+				<span class="text-[var(--color-text)]">AAuth Protocol</span> defines tokens, access modes, and federation. It builds on <span class="text-[var(--color-text)] whitespace-nowrap">HTTP Signature Keys</span> for key conveyance and message signatures.
 			</p>
 		</InView>
 
@@ -518,17 +478,12 @@ ${participants}
 		>
 			{#each specs as spec, i}
 				{@const delay = i * 150}
-				{#if spec.status === 'Exploratory' && i > 0 && specs[i - 1].status !== 'Exploratory'}
-					<div class="flex items-center gap-3 pt-4 pb-2 text-xs uppercase tracking-wider text-[var(--color-text-dim)] font-mono">
-						<span>Extensions</span>
-						<span class="flex-1 h-px bg-[var(--color-border)]"></span>
-					</div>
-				{/if}
 				<a
 					href={spec.href}
 					target="_blank"
 					rel="noopener"
 					class="glow-card block rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-transform duration-200 no-underline hover:scale-[1.02]
+						{spec.indent ? 'ml-8 md:ml-12' : ''}
 						{layersVisible ? 'spec-reveal' : 'opacity-0'}"
 					style="--reveal-delay: {delay}ms"
 				>
@@ -590,13 +545,17 @@ ${participants}
 						class="glow-card block h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
 					>
 						<h3 class="font-semibold mb-1 flex items-center gap-2">
-							<img
-								src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`}
-								alt=""
-								width="18"
-								height="18"
-								class="inline-block"
-							/>
+							{#if platform.iconGlyph}
+								<span class="font-mono text-[var(--color-text)] w-[18px] text-center">{platform.iconGlyph}</span>
+							{:else}
+								<img
+									src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`}
+									alt=""
+									width="18"
+									height="18"
+									class="inline-block"
+								/>
+							{/if}
 							{platform.name}
 							{#if !platform.available}
 								<span class="text-xs text-[var(--color-text-dim)] font-normal ml-2">wanted</span>
@@ -678,7 +637,7 @@ ${participants}
 		<InView>
 			<h2 class="text-2xl md:text-3xl font-bold mb-3 uppercase">Contribute</h2>
 			<p class="text-[var(--color-text-muted)] mb-6">
-				Spot an error on this page or want to help improve it?
+				See something to improve?
 			</p>
 			<a
 				href="https://github.com/hellocoop/aauth.dev/edit/main/src/routes/+page.svelte"
@@ -700,27 +659,33 @@ ${participants}
 			<div>
 				<span class="font-display font-bold text-lg">AAuth</span>
 				<p class="text-sm text-[var(--color-text-muted)] mt-2 max-w-xs">
-					Agent identity, resource access, and user delegation
-					for open ecosystems.
+					Agent identity, resource access, and user delegation for open ecosystems.
 				</p>
 				<p class="text-sm text-[var(--color-text-muted)] mt-3">
 					Founding sponsor: <a href="https://www.linkedin.com/in/geffenpo/" target="_blank" rel="noopener" class="hover:text-white transition-colors">Geffen Posner</a>
 				</p>
 			</div>
-			<div class="flex gap-12 text-sm">
+			<div class="flex gap-12 text-sm flex-wrap">
 				<div class="space-y-3">
-					<h4 class="font-semibold text-[var(--color-text-dim)] uppercase tracking-wider text-xs">Protocol</h4>
+					<h4 class="font-semibold text-[var(--color-text-dim)] uppercase tracking-wider text-xs">Learn</h4>
+					<a href="#compare" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Why AAuth</a>
+					<a href="#how-it-works" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">How It Works</a>
 					<a href="#specs" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Specifications</a>
-					<a href="https://playground.aauth.dev" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Playground</a>
-					<a href="/llms.txt" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline font-mono">llms.txt</a>
 				</div>
 				<div class="space-y-3">
-					<h4 class="font-semibold text-[var(--color-text-dim)] uppercase tracking-wider text-xs">Community</h4>
-					<a href="https://github.com/dickhardt/AAuth" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Spec GitHub</a>
-					<a href="#get-started" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Implementations</a>
-					<a href="https://github.com/hellocoop/aauth.dev/edit/main/src/routes/+page.svelte" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Edit this page</a>
+					<h4 class="font-semibold text-[var(--color-text-dim)] uppercase tracking-wider text-xs">Get Started</h4>
+					<a href="https://github.com/hellocoop/AAuth" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Node.js / TypeScript ↗</a>
+					<a href="https://github.com/christian-posta/aauth-full-demo" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Python ↗</a>
+					<a href="https://playground.aauth.dev" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Playground ↗</a>
+				</div>
+				<div class="space-y-3">
+					<h4 class="font-semibold text-[var(--color-text-dim)] uppercase tracking-wider text-xs">Site</h4>
+					<a href="/llms.txt" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline font-mono">llms.txt</a>
+					<a href="https://github.com/hellocoop/aauth.dev/edit/main/src/routes/+page.svelte" target="_blank" rel="noopener" class="block text-[var(--color-text-muted)] hover:text-white transition-colors no-underline">Edit this page ↗</a>
 				</div>
 			</div>
 		</div>
 	</div>
 </footer>
+
+</div>
