@@ -363,7 +363,7 @@ ${participants}
 						<tr class="border-b border-[var(--color-border)]">
 							<td class="p-4 text-[var(--color-text-dim)] font-medium">Credential</td>
 							<td class="p-4">Shared secret</td>
-							<td class="p-4">Client secret or PKCE + bearer token</td>
+							<td class="p-4">Secret, PKCE, or mTLS + bearer token</td>
 							<td class="p-4 text-[var(--color-text)]">Agent's own signing key</td>
 						</tr>
 						<tr class="border-b border-[var(--color-border)]">
