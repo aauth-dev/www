@@ -407,7 +407,7 @@ ${participants}
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
 					<div class="p-6">
 						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
-						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 min-h-[480px] overflow-x-auto md:overflow-hidden">
+						<div class="bg-[var(--color-bg-code)] rounded-lg p-5 min-h-[470px] overflow-x-auto md:overflow-hidden">
 							{#each modes as mode, i}
 								<div class="w-full {i === activeMode ? '' : 'hidden'}">
 									<Mermaid chart={mode.diagram} />
