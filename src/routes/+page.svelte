@@ -314,7 +314,7 @@ ${participants}
 </section>
 
 <!-- Scrolling content covers the fixed hero background -->
-<div class="relative z-10 bg-[var(--color-bg)] shadow-[0_-24px_48px_-12px_rgba(0,0,0,0.8)]">
+<div class="relative z-10 bg-[var(--color-bg)] border-t border-[var(--color-accent)]/25 shadow-[0_-8px_32px_-12px_color-mix(in_srgb,var(--color-accent)_18%,transparent)]">
 
 <!-- Agents Are Different -->
 <section id="compare" class="py-14 md:py-24 px-6">
