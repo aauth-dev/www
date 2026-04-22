@@ -275,8 +275,8 @@ ${participants}
 
 <Nav />
 
-<!-- Hero (pinned — content below scrolls over it) -->
-<section class="sticky top-0 h-screen flex items-center justify-center px-6 pt-16 overflow-hidden z-0">
+<!-- Hero (fixed behind content — content below scrolls over it) -->
+<section class="fixed inset-0 flex items-center justify-center px-6 pt-16 overflow-hidden z-0">
 	<div class="absolute inset-0 opacity-25 pointer-events-none">
 		<PrismaticBurst
 			intensity={1.8}
@@ -327,6 +327,9 @@ ${participants}
 		</div>
 	</div>
 </section>
+
+<!-- Spacer reserves viewport height for the fixed hero -->
+<div class="h-screen" aria-hidden="true"></div>
 
 <!-- Scrolling content covers the fixed hero background -->
 <div class="relative z-10 bg-[var(--color-bg)] border-t border-[var(--color-accent)]/25 shadow-[0_-8px_32px_-12px_color-mix(in_srgb,var(--color-accent)_18%,transparent)]">
