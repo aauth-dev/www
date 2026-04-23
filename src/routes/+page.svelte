@@ -378,12 +378,6 @@ ${participants}
 				</InView>
 			{/each}
 		</div>
-
-		<InView>
-			<p class="text-center text-[var(--color-text-muted)] max-w-3xl mx-auto mt-16 text-lg">
-				What's needed is <span class="text-[var(--color-text)]">internet-scale workload identity with user-delegated access</span> — open-world, no single authorization server required.
-			</p>
-		</InView>
 	</div>
 </section>
 
@@ -487,8 +481,8 @@ ${participants}
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">How AAuth Works</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-3xl mx-auto mb-4 text-lg">
-				Four access modes that answer the six problems above. The simplest replaces API keys; each adds parties and capabilities.<br class="hidden sm:inline" />
-				A resource adopts any mode independently — no coordination required.
+				Four access modes answering the six problems above. The simplest replaces API keys;<br class="hidden sm:inline" />
+				each adds parties — a resource adopts any mode independently.
 			</p>
 		</InView>
 
@@ -511,16 +505,6 @@ ${participants}
 				<span class="text-xs font-mono text-[var(--color-text-dim)] hidden sm:inline">&rarr; most capable</span>
 			</div>
 
-
-			<div class="max-w-4xl mx-auto mb-4 flex justify-center">
-				<ul class="text-xs text-left text-[var(--color-text-dim)] space-y-1 font-mono list-none">
-					<li><span class="text-[var(--color-text-muted)]">agent_token</span> establishes the agent's identity</li>
-					<li><span class="text-[var(--color-text-muted)]">resource_token</span> describes the access needed</li>
-					<li><span class="text-[var(--color-text-muted)]">auth_token</span> grants an agent access to a resource</li>
-					<li><span class="text-[var(--color-text-muted)]">jwks_uri</span> PS's JWKS endpoint, discovered via well-known metadata</li>
-					<li><span class="text-[var(--color-text-muted)]">PS</span> Person Server &middot; <span class="text-[var(--color-text-muted)]">AS</span> Access Server</li>
-				</ul>
-			</div>
 
 			<div class="max-w-4xl mx-auto">
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
@@ -573,6 +557,15 @@ ${participants}
 
 					</div>
 				</div>
+			</div>
+			<div class="mt-4 flex justify-center">
+				<ul class="text-xs text-left text-[var(--color-text-dim)] space-y-1 font-mono list-none">
+					<li><span class="text-[var(--color-text-muted)]">agent_token</span> establishes the agent's identity</li>
+					<li><span class="text-[var(--color-text-muted)]">resource_token</span> describes the access needed</li>
+					<li><span class="text-[var(--color-text-muted)]">auth_token</span> grants an agent access to a resource</li>
+					<li><span class="text-[var(--color-text-muted)]">jwks_uri</span> PS's JWKS endpoint, discovered via well-known metadata</li>
+					<li><span class="text-[var(--color-text-muted)]">PS</span> Person Server &middot; <span class="text-[var(--color-text-muted)]">AS</span> Access Server</li>
+				</ul>
 			</div>
 		</InView>
 	</div>
