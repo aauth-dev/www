@@ -104,7 +104,7 @@ ${participants}
 		{
 			name: 'Resource-Managed',
 			parties: 'Agent + Resource',
-			desc: 'Resource handles authorization itself — via user interaction, consent, or an existing OAuth / OIDC provider.',
+			desc: 'Resource handles authorization itself — via user interaction, consent, or an existing OAuth / OIDC provider. Drop-in for OAuth / OIDC shops.',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token
@@ -127,7 +127,7 @@ ${participants}
 		{
 			name: 'PS-Managed',
 			parties: 'Agent + Resource + PS',
-			desc: 'Resource issues a resource token. PS issues an auth token (consent at PS may apply).',
+			desc: 'Access is brokered by a server representing the user — the PS. It handles consent and issues the auth token; the resource stays focused on its API.',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token<br/>POST /authorize\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u200D
@@ -148,7 +148,7 @@ ${participants}
 		{
 			name: 'Federated',
 			parties: 'Agent + Resource + PS + AS',
-			desc: 'Resource has its own Access Server. PS federates with AS to obtain the auth token across trust domains.',
+			desc: 'Internet-scale mode for cross-organization access. Resource has its own Access Server; PS federates with AS across trust domains to obtain the auth token.',
 			diagram: `sequenceDiagram
 ${participants}
     A->>R: HTTPSig w/ agent token<br/>POST /authorize\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u200D
@@ -309,13 +309,15 @@ ${participants}
 		/>
 	</div>
 
-	<div class="relative z-10 max-w-4xl mx-auto text-center">
-		<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] uppercase">
-			HTTP Clients Need <span class="text-[var(--color-accent)]">Their Own Identity</span>
+	<div class="relative z-10 max-w-5xl mx-auto text-center">
+		<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.1] uppercase">
+			Software Is <span class="text-[var(--color-accent)]">Changing</span>
 		</h1>
-		<p class="text-xl md:text-2xl text-[var(--color-text-muted)] max-w-3xl mx-auto mb-12 leading-relaxed">
-			AAuth gives every HTTP client its own cryptographic identity.<br class="hidden sm:inline" />
-			No pre-registration. No shared secrets. No replayable tokens.
+		<p class="text-2xl md:text-4xl font-semibold text-[var(--color-text)] max-w-5xl mx-auto mb-8 leading-tight uppercase tracking-tight">
+			And HTTP Clients Need <span class="text-[var(--color-accent)]">Their Own Identity</span>
+		</p>
+		<p class="text-xl md:text-2xl text-[var(--color-text-muted)] max-w-4xl mx-auto mb-12 leading-relaxed">
+			AAuth — no pre-registration, no shared secrets, no replayable tokens.
 		</p>
 		<!-- <p class="text-lg text-[var(--color-text-dim)] max-w-2xl mx-auto mb-12 leading-relaxed">
 			A domain, static metadata, and a JWKS. That's it. This is the foundation
@@ -355,11 +357,11 @@ ${participants}
 <!-- Scrolling content covers the fixed hero background -->
 <div class="relative z-10 bg-[var(--color-bg)] border-t border-[var(--color-accent)]/25 shadow-[0_-8px_32px_-12px_color-mix(in_srgb,var(--color-accent)_18%,transparent)]">
 
-<!-- Agents Are Different -->
-<section id="compare" class="py-14 md:py-24 px-6">
+<!-- What Changed -->
+<section id="what-changed" class="py-14 md:py-24 px-6">
 	<div class="max-w-6xl mx-auto">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">Software Is Changing</h2>
+			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">What Changed</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-4xl mx-auto mb-16 text-lg">
 				Software used to know at build time what it would call and what it would need.<br class="hidden sm:inline" />
 				Now models write, agents compose, tool chains assemble at runtime — old protocols don't fit.
@@ -481,8 +483,8 @@ ${participants}
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">How AAuth Works</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-3xl mx-auto mb-4 text-lg">
-				Four access modes answering the six problems above. The simplest replaces API keys;<br class="hidden sm:inline" />
-				each adds parties — a resource adopts any mode independently.
+				AAuth has four access modes. The simplest replaces API keys;<br class="hidden sm:inline" />
+				each adds parties and capabilities. Adopt any mode independently.
 			</p>
 		</InView>
 
@@ -509,7 +511,7 @@ ${participants}
 			<div class="max-w-4xl mx-auto">
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
 					<div class="p-6">
-						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
+						<p class="text-[var(--color-text-muted)] mb-6 min-h-[4.5rem]">{modes[activeMode].desc}</p>
 						<!-- Mobile: vertical step-list -->
 						<div class="md:hidden bg-[var(--color-bg-code)] rounded-lg p-5">
 							<ol class="space-y-3">
@@ -597,7 +599,7 @@ ${participants}
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">See It Running</h2>
 			<p class="text-center text-[var(--color-text-muted)] max-w-3xl mx-auto mb-12 text-lg">
-				Two live resources that answer those six problems. Bootstrap an agent in the Playground and watch the flow — signed requests, PS-brokered consent, access granted.
+				Two live resources running end-to-end. Bootstrap an agent in the Playground and watch the flow — signed requests, PS-brokered consent, access granted.
 			</p>
 		</InView>
 

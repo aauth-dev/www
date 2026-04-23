@@ -18,7 +18,7 @@
 	});
 
 	const links = [
-		{ href: '#compare', label: 'Why AAuth' },
+		{ href: '#what-changed', label: 'Why AAuth' },
 		{ href: '#how-it-works', label: 'How It Works' },
 		{ href: '#get-started', label: 'Learn More' }
 	];
