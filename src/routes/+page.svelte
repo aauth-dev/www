@@ -382,7 +382,7 @@ ${participants}
 
 <!-- Why AAuth? -->
 <section id="why-aauth" class="py-14 md:py-24 px-6">
-	<div class="max-w-3xl mx-auto">
+	<div class="max-w-4xl mx-auto">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">Why AAuth?</h2>
 			<p class="text-center text-base text-[var(--color-text-muted)] italic mb-8">
