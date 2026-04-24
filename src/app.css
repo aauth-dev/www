@@ -31,6 +31,7 @@
 html {
 	color-scheme: dark;
 	scroll-behavior: smooth;
+	overscroll-behavior: none;
 }
 
 @property --glow-angle {
