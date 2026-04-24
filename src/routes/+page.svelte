@@ -383,14 +383,17 @@ ${participants}
 	</div>
 </section>
 
-<!-- What Is AAuth? -->
-<section id="what-is-aauth" class="py-14 md:py-24 px-6">
+<!-- Why AAuth? -->
+<section id="why-aauth" class="py-14 md:py-24 px-6">
 	<div class="max-w-3xl mx-auto">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold text-center mb-8 uppercase">What Is AAuth?</h2>
+			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">Why AAuth?</h2>
+			<p class="text-center text-base text-[var(--color-text-muted)] italic mb-8">
+				By <a href="https://www.linkedin.com/in/dickhardt" target="_blank" rel="noopener" class="text-[var(--color-text)] hover:text-white transition-colors not-italic">Dick Hardt</a>, author of OAuth 2.0
+			</p>
 			<div class="text-[var(--color-text-muted)] text-lg leading-relaxed space-y-5">
 				<p>
-					After implementing MCP authorization — and writing thousands of lines of "code in English" inspired by Andrej Karpathy's Software 3.0 talk — I concluded <a href="https://www.linkedin.com/feed/update/urn:li:activity:7358178115673616384/" target="_blank" rel="noopener" class="text-[var(--color-text)] font-medium hover:underline">OAuth is not a good fit for agents ↗</a>. Bearer tokens on client devices with no DPoP protection. Dynamic Client Registration we ended up circumventing entirely. Coarse-grained scopes that didn't match real-world access control needs. I drafted a Specification Enhancement Proposal, and worked with others in the identity community who'd hit the same walls.
+					After implementing authorization for our MCP server, I concluded <a href="https://www.linkedin.com/feed/update/urn:li:activity:7358178115673616384/" target="_blank" rel="noopener" class="text-[var(--color-text)] font-medium hover:underline">OAuth is not a good fit for MCP ↗</a> and started working with others in the identity community who'd hit the same walls.
 				</p>
 				<p>
 					AAuth is what came out of that work. It gives every HTTP client its own cryptographic identity and carries <span class="text-[var(--color-text)]">identity claims and authorization claims in the same token</span>. It coexists with OAuth 2.0 and OpenID Connect rather than replacing them.
@@ -399,9 +402,6 @@ ${participants}
 					The web gave servers identity. It's time clients got the same.
 				</p>
 			</div>
-			<p class="mt-6 text-base text-[var(--color-text-muted)] italic">
-				— <a href="https://www.linkedin.com/in/dickhardt" target="_blank" rel="noopener" class="text-[var(--color-text)] hover:text-white transition-colors not-italic">Dick Hardt</a>, author of OAuth 2.0
-			</p>
 		</InView>
 	</div>
 </section>
