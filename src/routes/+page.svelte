@@ -256,6 +256,13 @@ ${participants}
 
 	const deepDives = [
 		{
+			title: 'Know Which of Your Agents Wrote What',
+			author: 'Mark Hendrickson',
+			desc: 'Per-row attribution for agent writes via AAuth identity in Neotoma',
+			href: 'https://markmhendrickson.com/posts/know-which-of-your-agents-wrote-what/',
+			date: '2026-04-28'
+		},
+		{
 			title: 'AAuth Now Has a Mission Layer',
 			author: 'Karl McGuinness',
 			desc: 'Mission is now a first-class protocol object — is the layer strong enough?',
@@ -301,7 +308,8 @@ ${participants}
 
 	const authorAvatars = {
 		'Christian Posta': '/authors/christian-posta.jpg',
-		'Karl McGuinness': '/authors/karl-mcguinness.png'
+		'Karl McGuinness': '/authors/karl-mcguinness.png',
+		'Mark Hendrickson': '/authors/mark-hendrickson.jpg'
 	};
 </script>
 
