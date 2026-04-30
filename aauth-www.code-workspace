@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "aauth-www"
+		},
+		{
+			"path": "../../aauth-explorer",
+			"name": "aauth-explorer"
+		}
+	],
+	"settings": {}
+}

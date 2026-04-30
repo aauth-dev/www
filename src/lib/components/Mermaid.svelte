@@ -1,7 +1,73 @@
 <script>
+	import { onMount } from 'svelte';
+
 	let { chart } = $props();
 	let container = $state();
 	let svg = $state('');
+	/** Bumps when `data-theme` on <html> changes so diagrams re-render for light/dark. */
+	let themeVersion = $state(0);
+
+	const mermaidThemeDark = {
+		background: '#1a1a25',
+		primaryColor: '#12121a',
+		primaryTextColor: '#e4e4ed',
+		primaryBorderColor: '#2e2e42',
+		secondaryColor: '#12121a',
+		tertiaryColor: '#12121a',
+		lineColor: '#55556a',
+		textColor: '#e4e4ed',
+		actorBkg: '#12121a',
+		actorBorder: '#2e2e42',
+		actorTextColor: '#e4e4ed',
+		actorLineColor: '#55556a',
+		signalColor: '#8888a0',
+		signalTextColor: '#e4e4ed',
+		labelBoxBkgColor: '#1a1a25',
+		labelBoxBorderColor: '#2e2e42',
+		labelTextColor: '#e4e4ed',
+		loopTextColor: '#e4e4ed',
+		noteBkgColor: '#2e2844',
+		noteBorderColor: '#4b3f7a',
+		noteTextColor: '#e4e4ed',
+		activationBkgColor: '#2e2e42',
+		activationBorderColor: '#55556a',
+		sequenceNumberColor: '#e4e4ed'
+	};
+
+	const mermaidThemeLight = {
+		background: '#eef1f6',
+		primaryColor: '#ffffff',
+		primaryTextColor: '#0f172a',
+		primaryBorderColor: '#d8dee8',
+		secondaryColor: '#f8fafc',
+		tertiaryColor: '#f8fafc',
+		lineColor: '#64748b',
+		textColor: '#0f172a',
+		actorBkg: '#ffffff',
+		actorBorder: '#cbd5e1',
+		actorTextColor: '#0f172a',
+		actorLineColor: '#64748b',
+		signalColor: '#475569',
+		signalTextColor: '#0f172a',
+		labelBoxBkgColor: '#eef1f6',
+		labelBoxBorderColor: '#cbd5e1',
+		labelTextColor: '#0f172a',
+		loopTextColor: '#0f172a',
+		noteBkgColor: '#e0e7ff',
+		noteBorderColor: '#6366f1',
+		noteTextColor: '#1e1b4b',
+		activationBkgColor: '#cbd5e1',
+		activationBorderColor: '#94a3b8',
+		sequenceNumberColor: '#0f172a'
+	};
+
+	onMount(() => {
+		const obs = new MutationObserver(() => {
+			themeVersion++;
+		});
+		obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+		return () => obs.disconnect();
+	});
 
 	function countSignals(src) {
 		return src
@@ -11,6 +77,8 @@
 
 	$effect(() => {
 		if (!chart) return;
+		themeVersion;
+		const isLight = typeof document !== 'undefined' && document.documentElement.dataset.theme === 'light';
 		let cancelled = false;
 		(async () => {
 			const { default: mermaid } = await import('mermaid');
@@ -33,32 +101,7 @@
 					noteFontFamily: 'JetBrains Mono, monospace',
 					actorFontFamily: 'JetBrains Mono, monospace'
 				},
-				themeVariables: {
-					background: '#1a1a25',
-					primaryColor: '#12121a',
-					primaryTextColor: '#e4e4ed',
-					primaryBorderColor: '#2e2e42',
-					secondaryColor: '#12121a',
-					tertiaryColor: '#12121a',
-					lineColor: '#55556a',
-					textColor: '#e4e4ed',
-					actorBkg: '#12121a',
-					actorBorder: '#2e2e42',
-					actorTextColor: '#e4e4ed',
-					actorLineColor: '#55556a',
-					signalColor: '#8888a0',
-					signalTextColor: '#e4e4ed',
-					labelBoxBkgColor: '#1a1a25',
-					labelBoxBorderColor: '#2e2e42',
-					labelTextColor: '#e4e4ed',
-					loopTextColor: '#e4e4ed',
-					noteBkgColor: '#2e2844',
-					noteBorderColor: '#4b3f7a',
-					noteTextColor: '#e4e4ed',
-					activationBkgColor: '#2e2e42',
-					activationBorderColor: '#55556a',
-					sequenceNumberColor: '#e4e4ed'
-				}
+				themeVariables: isLight ? mermaidThemeLight : mermaidThemeDark
 			});
 			const id = 'm' + Math.random().toString(36).slice(2);
 			try {
