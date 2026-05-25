@@ -18,7 +18,7 @@ AAuth supports four resource access modes (identity-based, resource-managed, PS-
 
 - [TypeScript Reference Implementation](https://github.com/aauth-dev/packages-js): Node.js / TypeScript
 - [Python Demo](https://github.com/christian-posta/aauth-full-demo): Full demo with Keycloak & Agentgateway
-- [.NET SDK](https://github.com/aauth-dev/dotnet-samples): SDK with signed-request proof-of-possession
+- [.NET SDK](https://github.com/aauth-dev/dotnet-samples): Reference SDK and samples for .NET agents and MCP servers with signed-request auth
 
 ## npm Packages
 

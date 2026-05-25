@@ -237,13 +237,6 @@
 			desc: 'End-to-end A2A multi-agent flow with Keycloak and user consent.',
 			href: 'https://github.com/christian-posta/aauth-full-demo',
 			available: true
-		},
-		{
-			name: '.NET SDK',
-			icon: 'dotnet',
-			desc: 'SDK for agents and resources with signed-request proof-of-possession.',
-			href: 'https://github.com/aauth-dev/dotnet-samples',
-			available: true
 		}
 	];
 

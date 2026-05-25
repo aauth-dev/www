@@ -108,7 +108,7 @@ Try the protocol, explore the SDKs, and follow the conversation. The demos run a
 | Specifications | The Internet-Drafts defining the AAuth protocol and signatures. | [github.com/dickhardt/AAuth](https://github.com/dickhardt/AAuth) |
 | Node.js SDK | Reference SDK for agents and MCP servers with signed-request auth. | [github.com/aauth-dev/packages-js](https://github.com/aauth-dev/packages-js) |
 | Python Demo Source | End-to-end A2A multi-agent flow with Keycloak and user consent. | [github.com/christian-posta/aauth-full-demo](https://github.com/christian-posta/aauth-full-demo) |
-| .NET SDK | SDK for agents and resources with signed-request proof-of-possession. | [github.com/aauth-dev/dotnet-samples](https://github.com/aauth-dev/dotnet-samples) |
+| .NET SDK | Reference SDK and samples for .NET agents and MCP servers with signed-request auth. | [github.com/aauth-dev/dotnet-samples](https://github.com/aauth-dev/dotnet-samples) |
 
 ### Deep Dives
 
