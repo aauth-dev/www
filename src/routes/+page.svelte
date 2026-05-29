@@ -894,24 +894,37 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 					rel="noopener"
 					onmouseenter={() => (lumaTrigger = lumaTrigger + 1)}
 					class="text-[var(--color-accent)] no-underline"
-				><DecryptText text="lu.ma/aauth ↗" trigger={lumaTrigger} /></a>. Or join us at <a
-					href="https://luma.com/a2h25m60?utm_source=aauth.dev"
-					target="_blank"
-					rel="noopener"
-					class="text-[var(--color-accent)] no-underline hover:underline"
-				>AAuth Night ↗</a>.
+				><DecryptText text="lu.ma/aauth ↗" trigger={lumaTrigger} /></a>.
 			</p>
 		</InView>
 		<InView>
-			<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
-				<iframe
-					src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
-					width="600"
-					height="450"
-					style="border: 0; width: 100%; display: block;"
-					allowfullscreen
-					title="AAuth Office Hours calendar"
-				></iframe>
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-3">Office Hours</h3>
+					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+						<iframe
+							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
+							width="600"
+							height="450"
+							style="border: 0; width: 100%; display: block;"
+							allowfullscreen
+							title="AAuth Office Hours calendar"
+						></iframe>
+					</div>
+				</div>
+				<div>
+					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-3">AAuth Night</h3>
+					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+						<iframe
+							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
+							width="600"
+							height="450"
+							style="border: 0; width: 100%; display: block;"
+							allowfullscreen
+							title="AAuth Night event"
+						></iframe>
+					</div>
+				</div>
 			</div>
 		</InView>
 	</div>
