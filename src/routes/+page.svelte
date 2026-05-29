@@ -890,8 +890,8 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 		<InView>
 			<div class="grid gap-6 md:grid-cols-2">
 				<div>
-					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-2">Office Hours</h3>
-					<p class="text-[var(--color-text-muted)] text-sm mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
+					<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
+					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
 						<iframe
 							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
@@ -904,8 +904,8 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 					</div>
 				</div>
 				<div>
-					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-2">AAuth Night</h3>
-					<p class="text-[var(--color-text-muted)] text-sm mb-4">Why connecting agents to company tools means rebuilding the identity layer from scratch.</p>
+					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
+					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on identity for AI agents.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
 						<iframe
 							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
