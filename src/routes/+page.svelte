@@ -898,7 +898,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 							width="600"
 							height="450"
 							style="border: 0; width: 100%; display: block;"
-							allowfullscreen
+							allow="fullscreen; payment"
 							title="AAuth Night event"
 						></iframe>
 					</div>
@@ -912,7 +912,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 							width="600"
 							height="450"
 							style="border: 0; width: 100%; display: block;"
-							allowfullscreen
+							allow="fullscreen; payment"
 							title="AAuth Office Hours calendar"
 						></iframe>
 					</div>
