@@ -905,7 +905,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 				</div>
 				<div>
 					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
-					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on identity for AI agents.</p>
+					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on auth for AI agents — talks and demos.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
 						<iframe
 							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
