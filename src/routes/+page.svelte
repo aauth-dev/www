@@ -888,7 +888,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Events</h2>
 			<p class="text-[var(--color-text-muted)] mb-10 text-lg">
-				Drop in to ask questions, share what you're building, or listen along.<br class="hidden md:inline"/> Sign up below or at <a
+				Drop in to office hours to ask questions, share what you're building, or listen along.<br class="hidden md:inline"/> Sign up below or at <a
 					href="https://lu.ma/aauth"
 					target="_blank"
 					rel="noopener"
