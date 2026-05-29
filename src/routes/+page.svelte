@@ -134,7 +134,6 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			setTimeout(() => { if (copiedIdx === idx) copiedIdx = -1; }, 1800);
 		} catch {}
 	}
-	let lumaTrigger = $state(0);
 
 	let lumaTheme = $state('dark');
 	$effect(() => {
@@ -886,21 +885,13 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 <section id="events" class="py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Events</h2>
-			<p class="text-[var(--color-text-muted)] mb-10 text-lg">
-				Drop in to office hours to ask questions, share what you're building, or listen along.<br class="hidden md:inline"/> Sign up below or at <a
-					href="https://lu.ma/aauth"
-					target="_blank"
-					rel="noopener"
-					onmouseenter={() => (lumaTrigger = lumaTrigger + 1)}
-					class="text-[var(--color-accent)] no-underline"
-				><DecryptText text="lu.ma/aauth ↗" trigger={lumaTrigger} /></a>.
-			</p>
+			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
 			<div class="grid gap-6 md:grid-cols-2">
 				<div>
-					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-3">Office Hours</h3>
+					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-2">Office Hours</h3>
+					<p class="text-[var(--color-text-muted)] text-sm mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
 						<iframe
 							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
@@ -913,7 +904,8 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 					</div>
 				</div>
 				<div>
-					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-3">AAuth Night</h3>
+					<h3 class="text-sm font-semibold uppercase tracking-wide text-[var(--color-text-muted)] mb-2">AAuth Night</h3>
+					<p class="text-[var(--color-text-muted)] text-sm mb-4">Why connecting agents to company tools means rebuilding the identity layer from scratch.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
 						<iframe
 							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
