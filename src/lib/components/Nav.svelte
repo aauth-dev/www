@@ -23,7 +23,8 @@
 		{ href: '#why-aauth', label: 'Why AAuth' },
 		{ href: '#how-it-works', label: 'How It Works' },
 		{ href: '#get-started', label: 'Explore AAuth' },
-		{ href: '#community', label: 'Community' }
+		{ href: '#community', label: 'Community' },
+		{ href: '#events', label: 'Events' }
 	];
 </script>
 

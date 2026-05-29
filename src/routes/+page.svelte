@@ -882,13 +882,27 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 
 
 <!-- Events -->
-<section id="events" class="py-[1.82rem] md:py-[3.12rem]">
+<section id="events" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
 			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
+					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on auth for AI agents.</p>
+					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+						<iframe
+							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
+							width="600"
+							height="450"
+							style="border: 0; width: 100%; display: block;"
+							allowfullscreen
+							title="AAuth Night event"
+						></iframe>
+					</div>
+				</div>
 				<div>
 					<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
 					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
@@ -900,20 +914,6 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 							style="border: 0; width: 100%; display: block;"
 							allowfullscreen
 							title="AAuth Office Hours calendar"
-						></iframe>
-					</div>
-				</div>
-				<div>
-					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
-					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on auth for AI agents — talks and demos.</p>
-					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
-						<iframe
-							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
-							width="600"
-							height="450"
-							style="border: 0; width: 100%; display: block;"
-							allowfullscreen
-							title="AAuth Night event"
 						></iframe>
 					</div>
 				</div>
