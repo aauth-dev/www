@@ -882,11 +882,11 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 </section>
 
 
-<!-- Office Hours -->
-<section id="office-hours" class="py-[1.82rem] md:py-[3.12rem]">
+<!-- Events -->
+<section id="events" class="py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Office Hours</h2>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Events</h2>
 			<p class="text-[var(--color-text-muted)] mb-10 text-lg">
 				Drop in to ask questions, share what you're building, or listen along.<br class="hidden md:inline"/> Sign up below or at <a
 					href="https://lu.ma/aauth"
