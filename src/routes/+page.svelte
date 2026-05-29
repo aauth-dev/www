@@ -894,7 +894,12 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 					rel="noopener"
 					onmouseenter={() => (lumaTrigger = lumaTrigger + 1)}
 					class="text-[var(--color-accent)] no-underline"
-				><DecryptText text="lu.ma/aauth ↗" trigger={lumaTrigger} /></a>.
+				><DecryptText text="lu.ma/aauth ↗" trigger={lumaTrigger} /></a>. Or join us at <a
+					href="https://luma.com/a2h25m60?utm_source=aauth.dev"
+					target="_blank"
+					rel="noopener"
+					class="text-[var(--color-accent)] no-underline hover:underline"
+				>AAuth Night ↗</a>.
 			</p>
 		</InView>
 		<InView>
