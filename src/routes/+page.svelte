@@ -888,22 +888,23 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
-			<div class="grid gap-6 md:grid-cols-2">
+			<div class="grid gap-6">
 				<div>
 					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
 					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening on auth for AI agents.</p>
-					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[#13370f]">
 						<iframe
 							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
 							width="600"
-							height="650"
+							class="h-[800px] md:h-[425px]"
 							style="border: 0; width: 100%; display: block;"
-							allow="fullscreen; payment"
+							loading="lazy"
+						allow="fullscreen; payment"
 							title="AAuth Night event"
 						></iframe>
 					</div>
 				</div>
-				<div>
+				<!-- <div>
 					<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
 					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
 					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
@@ -912,11 +913,12 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 							width="600"
 							height="650"
 							style="border: 0; width: 100%; display: block;"
-							allow="fullscreen; payment"
+							loading="lazy"
+						allow="fullscreen; payment"
 							title="AAuth Office Hours calendar"
 						></iframe>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</InView>
 	</div>
