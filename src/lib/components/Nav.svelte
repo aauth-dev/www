@@ -34,6 +34,14 @@
 		: 'border-transparent'}"
 	aria-label="Main"
 >
+	<a
+		href="#events"
+		class="flex items-center justify-center gap-2 h-8 px-4 text-xs sm:text-sm font-medium bg-[#13370f] text-white hover:opacity-90 transition-opacity no-underline"
+		onclick={closeMobile}
+	>
+		<span class="truncate">Join us for <span class="font-semibold">AAuth Night</span> in San Francisco.</span>
+		<span class="whitespace-nowrap underline underline-offset-2">Find out more</span>
+	</a>
 	<div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-5 md:px-8 h-12">
 	<a
 		href="/"
@@ -93,7 +101,7 @@
 	></button>
 	<div
 		id="mobile-nav-menu"
-		class="fixed top-[49px] left-0 right-0 z-[95] md:hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] shadow-lg"
+		class="fixed top-[81px] left-0 right-0 z-[95] md:hidden border-b border-[var(--color-border)] bg-[var(--color-bg)] shadow-lg"
 	>
 		<div class="flex flex-col px-5 py-3 gap-1">
 			{#each links as link}
