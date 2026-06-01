@@ -896,7 +896,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 						<iframe
 							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
 							width="600"
-							height="450"
+							height="650"
 							style="border: 0; width: 100%; display: block;"
 							allow="fullscreen; payment"
 							title="AAuth Night event"
@@ -910,7 +910,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 						<iframe
 							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
 							width="600"
-							height="450"
+							height="650"
 							style="border: 0; width: 100%; display: block;"
 							allow="fullscreen; payment"
 							title="AAuth Office Hours calendar"
