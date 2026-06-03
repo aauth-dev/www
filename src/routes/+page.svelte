@@ -677,6 +677,9 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			</p>
 		</InView>
 
+		<InView>
+			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4">Demos &amp; Tools</h3>
+		</InView>
 		<div class="grid grid-cols-1 gap-4 mb-9">
 			{#each demos as demo, i}
 				<InView class="h-full">
@@ -725,6 +728,9 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			{/each}
 		</div>
 
+		<InView>
+			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4">Specs &amp; SDKs</h3>
+		</InView>
 		<div
 			class="grid grid-cols-1 sm:grid-cols-2 gap-3"
 			onmousemove={(e) => {
@@ -790,8 +796,11 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 		</div>
 
 		<InView>
+			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4 mt-9">Articles &amp; Talks</h3>
+		</InView>
+		<InView>
 			<div
-				class="space-y-3 mt-9"
+				class="space-y-3"
 				onmousemove={(e) => {
 					const cards = e.currentTarget.querySelectorAll('.glow-card');
 					cards.forEach((card) => {
