@@ -22,6 +22,7 @@
 
 	--color-accent: #40D97B;
 	--color-accent-hover: #31A75F;
+	--color-on-accent: #000000;
 }
 
 /* Light theme: higher-contrast text and surfaces. Tracks the OS preference. */
@@ -38,6 +39,7 @@
 		--color-person: #0f172a;
 		--color-accent: #0d9b4d;
 		--color-accent-hover: #0a7a3d;
+		--color-on-accent: #ffffff;
 	}
 
 	.hero-burst {

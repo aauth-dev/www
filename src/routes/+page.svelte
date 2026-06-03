@@ -30,6 +30,7 @@
 	let getStartedTrigger = $state(0);
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
+	let aauthNightTrigger = $state(0);
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -375,7 +376,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			<a
 				href="https://playground.aauth.dev"
 				onmouseenter={() => playgroundTrigger++}
-				class="font-display inline-flex items-center justify-center gap-2 px-7 py-3.5 w-full sm:w-auto rounded-lg bg-[var(--color-accent)] text-black font-medium no-underline"
+				class="font-display inline-flex items-center justify-center gap-2 px-7 py-3.5 w-full sm:w-auto rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 			>
 				<span class="font-mono text-sm">&gt;</span>
 				<DecryptText text="Try the demo" trigger={playgroundTrigger} />
@@ -565,7 +566,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 						onclick={() => (activeMode = i)}
 						class="px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer border
 							{activeMode === i
-							? 'bg-[var(--color-accent)] text-black border-transparent'
+							? 'bg-[var(--color-accent)] text-[var(--color-on-accent)] border-transparent'
 							: 'bg-[var(--color-bg-card)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-[var(--color-border-hover)]'}"
 					>
 						{mode.name}
@@ -889,19 +890,30 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 		</InView>
 		<InView>
 			<div class="grid gap-6">
-				<div>
-					<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
-					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
-					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[#13370f]">
-						<iframe
-							src={`https://luma.com/embed/event/evt-DaVOoSlMt1iCiJD/simple?lt=${lumaTheme}&utm_source=aauth.dev`}
-							style="border: 0; width: 100%; display: block;"
-							class="min-h-[800px] sm:min-h-[420px]"
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+					<div class="flex items-center gap-4">
+						<img
+							src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=400,height=400/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
+							alt="AAuth Night"
+							width="192"
+							height="192"
 							loading="lazy"
-							allow="fullscreen; payment"
-							title="AAuth Night event"
-						></iframe>
+							class="w-32 h-32 sm:w-48 sm:h-48 rounded-lg object-cover shrink-0"
+						/>
+						<div>
+							<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
+							<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
+						</div>
 					</div>
+					<a
+						href="https://luma.com/event/evt-DaVOoSlMt1iCiJD?utm_source=aauth.dev"
+						target="_blank"
+						rel="noopener"
+						onmouseenter={() => aauthNightTrigger++}
+						class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+					>
+						<DecryptText text="Register ↗" trigger={aauthNightTrigger} />
+					</a>
 				</div>
 				<!-- <div>
 					<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
