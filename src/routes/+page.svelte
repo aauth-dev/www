@@ -283,6 +283,13 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 
 	const deepDives = [
 		{
+			title: 'Insecure Agents Podcast: Moving Beyond OAuth and the Future of Agent Auth',
+			author: 'Dick Hardt',
+			desc: 'Why OAuth breaks for agents and running them without API keys',
+			href: 'https://www.youtube.com/watch?v=pn-m4YJQkqs',
+			date: '2026-06-03'
+		},
+		{
 			title: 'Know Which of Your Agents Wrote What',
 			author: 'Mark Hendrickson',
 			desc: 'Per-row attribution for agent writes via AAuth identity in Neotoma',
@@ -336,7 +343,8 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 	const authorAvatars = {
 		'Christian Posta': '/authors/christian-posta.jpg',
 		'Karl McGuinness': '/authors/karl-mcguinness.png',
-		'Mark Hendrickson': '/authors/mark-hendrickson.jpg'
+		'Mark Hendrickson': '/authors/mark-hendrickson.jpg',
+		'Dick Hardt': '/authors/dick-hardt.jpg'
 	};
 </script>
 
@@ -802,6 +810,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 				}}
 			>
 				{#each deepDives as post}
+					{@const authors = Array.isArray(post.author) ? post.author : [post.author]}
 					<a
 						href={post.href}
 						target="_blank"
@@ -813,17 +822,17 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 							<span class="text-xs text-[var(--color-text-dim)] shrink-0 mt-1 font-mono">{post.date}</span>
 						</div>
 						<p class="text-sm text-[var(--color-text-muted)] flex items-center gap-2">
-							{#if authorAvatars[post.author]}
+							{#each authors.filter((a) => authorAvatars[a]) as name, j}
 								<img
-									src={authorAvatars[post.author]}
-									alt={post.author}
+									src={authorAvatars[name]}
+									alt={name}
 									width="20"
 									height="20"
-									class="w-5 h-5 rounded-full object-cover shrink-0"
+									class="w-5 h-5 rounded-full object-cover shrink-0 {j > 0 ? '-ml-3 ring-2 ring-[var(--color-bg-card)]' : ''}"
 									loading="lazy"
 								/>
-							{/if}
-							<span>{post.author} — {post.desc}</span>
+							{/each}
+							<span>{authors.join(' & ')} — {post.desc}</span>
 						</p>
 					</a>
 				{/each}
