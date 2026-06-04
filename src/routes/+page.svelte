@@ -2,6 +2,7 @@
 	import Nav from '$lib/components/Nav.svelte';
 	import InView from '$lib/components/InView.svelte';
 	import JointSequence, { computeHeight } from '$lib/components/JointSequence.svelte';
+	import cliPromptSource from '$lib/walkthrough.md?raw';
 
 	const participantsList = ['Agent', 'Resource', 'Person Server', 'Access Server'];
 	import DecryptText from '$lib/components/DecryptText.svelte';
@@ -83,13 +84,7 @@
 		}
 	];
 
-	const cliPrompt = `AAuth is an HTTP authorization protocol that lets agents call protected resources on your behalf using signed requests instead of bearer tokens. This prompt walks an agent through AAuth end-to-end — generate a signing keypair, publish the public key so resources can verify your signatures, then make a real signed call — and has the agent explain each step as it happens.
-
-First, check whether a signing keypair has already been generated on this machine: npx @aauth/bootstrap list. If nothing's set up, follow npx @aauth/bootstrap skill setup step-by-step — it'll generate a keypair, ask where to publish the public key (a JWKS file hosted at a URL the resource can fetch — GitHub Pages, GitLab Pages, Cloudflare Pages, etc.), and verify it's reachable before continuing. Then call https://whoami.aauth.dev?scope=openid+profile with npx @aauth/fetch -v — whoami echoes back the identity claims the resource sees about you, and -v prints each protocol event (token exchange, signature construction, response) so the wire-level behavior is visible.
-
-Narrate the entire run as a single flat bulleted list — each bullet is one sentence in present-progressive form with a short "so that …" clause and the artifact's JSON in a fenced code block. For the fetch portion, use each -v event's description field verbatim and include its raw JSON payload as emitted by fetch — do not decode JWTs or substitute claims for token strings; if consent is already on file (no 202 from token-exchange), say so and explain why no browser opened. End with the resource's response body.
-
-For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @aauth/bootstrap skill rather than inferring from CLI output.`;
+	const cliPrompt = cliPromptSource.trim();
 
 	const demos = [
 		{
@@ -696,7 +691,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 						</h3>
 						<p class="text-sm text-[var(--color-text-muted)] mb-5 leading-relaxed">{@html demo.desc}</p>
 						{#if demo.prompt}
-							<pre class="mb-4 p-3 rounded-lg bg-[var(--color-bg-code)] border border-[var(--color-border)] text-xs text-[var(--color-text-muted)] font-mono leading-relaxed overflow-x-auto whitespace-nowrap">{demo.prompt.replace(/\n+/g, ' ')}</pre>
+							<pre class="mb-4 p-3 rounded-lg bg-[var(--color-bg-code)] border border-[var(--color-border)] text-xs text-[var(--color-text-muted)] font-mono leading-relaxed max-h-36 overflow-y-auto whitespace-pre-wrap break-words">{demo.prompt}</pre>
 						{/if}
 						<div class="mt-auto flex flex-wrap gap-4 text-sm">
 							{#if demo.prompt}
@@ -968,8 +963,7 @@ For any protocol detail, fetch the AAuth spec URL printed at the bottom of npx @
 			</div>
 			<div class="flex items-center gap-5 text-sm flex-wrap">
 				<a href="/llms.txt" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors no-underline font-mono">llms.txt</a>
-				<a href="/home.md" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors no-underline font-mono">home.md</a>
-				<a href="https://github.com/hellocoop/aauth.dev/edit/main/src/routes/+page.svelte" target="_blank" rel="noopener" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors no-underline">Edit this page ↗</a>
+				<a href="https://github.com/aauth-dev/www/edit/main/src/routes/+page.svelte" target="_blank" rel="noopener" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors no-underline">Edit this page ↗</a>
 			</div>
 		</div>
 	</div>

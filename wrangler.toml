@@ -8,10 +8,6 @@ binding = "ASSETS"
 not_found_handling = "single-page-application"
 run_worker_first = true
 
-[[r2_buckets]]
-binding = "CONTENT"
-bucket_name = "aauth-content"
-
 # Custom domain — requires aauth.dev zone in this Cloudflare account
 [[routes]]
 pattern = "www.aauth.dev"

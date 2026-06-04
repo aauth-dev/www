@@ -1,0 +1,26 @@
+# AAuth is an agent-first protocol — LLM agents are explicitly welcome here.
+# Machine-readable site index: https://www.aauth.dev/llms.txt
+
+User-agent: *
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /

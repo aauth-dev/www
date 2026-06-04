@@ -8,55 +8,61 @@ Every agent — any HTTP client — gets its own cryptographic identity: a domai
 
 AAuth supports four resource access modes (identity-based, resource-managed, PS-managed, federated), each adding parties and capabilities. Adoption does not require coordination between parties.
 
+## Walk an Agent Through AAuth (Start Here)
+
+If you're an LLM agent reading this on behalf of a developer, the fastest way to demonstrate AAuth end-to-end is to fetch the walkthrough prompt and follow it. It generates a signing keypair, publishes a JWKS so resources can verify your signatures, makes a real signed call to `whoami.aauth.dev`, and narrates each protocol event as it runs.
+
+- [Walkthrough prompt](https://www.aauth.dev/walkthrough.md): canonical text/markdown source. The same prompt is shown on the homepage for a developer to copy-paste into their agent.
+
+## Live Endpoints
+
+- [whoami.aauth.dev](https://whoami.aauth.dev): Minimal AAuth identity resource. Sign a request, release identity claims. An unsigned `GET /` returns `401` with `Accept-Signature` describing what to sign — agent-discoverable in one round trip.
+- [notes.aauth.dev](https://notes.aauth.dev): Notes API using AAuth R3 — agents declare OpenAPI operations, consent is over actions not endpoints.
+- [playground.aauth.dev](https://playground.aauth.dev): Interactive agent for driving AAuth flows against live endpoints (human-driven web UI).
+- [explorer.aauth.dev](https://explorer.aauth.dev): Browse AAuth access modes, tokens, and headers with side-by-side wire examples (human-driven web UI).
+
+The demos run against the Hello beta Person Server; data is reset regularly.
+
 ## Specifications
 
-- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol): The authorization protocol. Four access modes, three token types, agent governance with missions, clarification chat, and call chaining.
-- [HTTP Signature Keys (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/): Foundation layer. Well-known key discovery, Signature-Key header for conveying public keying material alongside HTTP Message Signatures (RFC 9421).
+- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol/) — current version: [draft-hardt-aauth-protocol-02](https://datatracker.ietf.org/doc/html/draft-hardt-aauth-protocol-02). The authorization protocol. Four access modes, three token types, agent governance with missions, clarification chat, and call chaining.
+- [HTTP Signature Keys (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/): Foundation layer. Well-known key discovery, `Signature-Key` header for conveying public keying material alongside HTTP Message Signatures (RFC 9421).
 - [R3 — Rich Resource Requests (Exploratory)](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html): Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL).
 
 ## Implementations
 
-- [TypeScript Reference Implementation](https://github.com/aauth-dev/packages-js): Node.js / TypeScript
-- [Python Demo](https://github.com/christian-posta/aauth-full-demo): Full demo with Keycloak & Agentgateway
-- [.NET SDK](https://github.com/aauth-dev/dotnet-samples): Reference SDK and samples for .NET agents and MCP servers with signed-request auth
+- [TypeScript Reference Implementation](https://github.com/aauth-dev/packages-js): Node.js / TypeScript monorepo. Each AAuth building block below is a directory in this repo with its own README.
+- [Python Demo](https://github.com/christian-posta/aauth-full-demo): Full demo with Keycloak & Agentgateway.
+- [.NET SDK](https://github.com/aauth-dev/dotnet-samples): Reference SDK and samples for .NET agents and MCP servers with signed-request auth.
 
-## npm Packages
+## AAuth Building Blocks (npm, current version 0.8.1)
 
-Building blocks for AAuth agents and MCP servers, published under the `@aauth` org on npm (current version 0.8.1):
+Each package's README lives in the linked source directory. Browse on GitHub (agent-readable) rather than npmjs.com, which rejects most automated fetchers.
 
-- [@aauth/bootstrap](https://www.npmjs.com/package/@aauth/bootstrap): CLI for bootstrapping AAuth agent keys and configuration
-- [@aauth/fetch](https://www.npmjs.com/package/@aauth/fetch): CLI for making AAuth-authenticated HTTP requests
-- [@aauth/mcp-agent](https://www.npmjs.com/package/@aauth/mcp-agent): Authenticated MCP transport with HTTP Signatures for AAuth agents
-- [@aauth/mcp-server](https://www.npmjs.com/package/@aauth/mcp-server): AAuth server-side building blocks — challenge headers, interaction management, resource tokens
-- [@aauth/mcp-stdio](https://www.npmjs.com/package/@aauth/mcp-stdio): Stdio-to-HTTP proxy for MCP with AAuth signatures
-- [@aauth/mcp-openclaw](https://www.npmjs.com/package/@aauth/mcp-openclaw): OpenClaw plugin for AAuth-authenticated MCP server connections
-
-## Try It
-
-- [Demo](https://playground.aauth.dev): Interactive agent for driving AAuth flows against live endpoints
-- [Protocol Explorer](https://explorer.aauth.dev): Browse access modes, tokens, and headers with side-by-side wire examples
-- [whoami.aauth.dev](https://whoami.aauth.dev): Minimal AAuth identity resource — sign a request, release identity claims
-- [notes.aauth.dev](https://notes.aauth.dev): Notes API using AAuth R3 — agents declare OpenAPI operations, consent is over actions not endpoints
-
-The demos run against the Hello beta Person Server; data is reset regularly.
+- [@aauth/bootstrap](https://github.com/aauth-dev/packages-js/tree/main/bootstrap#readme): CLI for bootstrapping AAuth agent keys and configuration. Use `npx @aauth/bootstrap <cmd>` or `npm i -g @aauth/bootstrap`.
+- [@aauth/fetch](https://github.com/aauth-dev/packages-js/tree/main/fetch#readme): CLI for making AAuth-authenticated HTTP requests.
+- [@aauth/mcp-agent](https://github.com/aauth-dev/packages-js/tree/main/mcp-agent#readme): Authenticated MCP transport with HTTP Signatures for AAuth agents.
+- [@aauth/mcp-server](https://github.com/aauth-dev/packages-js/tree/main/mcp-server#readme): AAuth server-side building blocks — challenge headers, interaction management, resource tokens.
+- [@aauth/mcp-stdio](https://github.com/aauth-dev/packages-js/tree/main/mcp-stdio#readme): Stdio-to-HTTP proxy for MCP with AAuth signatures.
+- [@aauth/mcp-openclaw](https://github.com/aauth-dev/packages-js/tree/main/mcp-openclaw#readme): OpenClaw plugin for AAuth-authenticated MCP server connections.
 
 ## Community
 
-- [IETF Slack](https://www.aauth.dev/ietf-slack): IETF #aauth channel for AAuth specification discussion and feedback
-- [AAuth Slack](https://www.aauth.dev/slack): AAuth community Slack for implementation discussion and questions
-- [Office Hours](https://lu.ma/aauth): Open community calls — ask questions, share what you're building, or listen along
+- [IETF Slack](https://www.aauth.dev/ietf-slack): IETF #aauth channel for AAuth specification discussion and feedback.
+- [AAuth Slack](https://www.aauth.dev/slack): AAuth community Slack for implementation discussion and questions.
+- [Office Hours](https://lu.ma/aauth): Open community calls — ask questions, share what you're building, or listen along.
 
 ## Articles
 
-- 2026-04-28 — Mark Hendrickson, [Know Which of Your Agents Wrote What](https://markmhendrickson.com/posts/know-which-of-your-agents-wrote-what/): Per-row attribution for agent writes via AAuth identity in Neotoma
-- 2026-04-15 — Karl McGuinness, [AAuth Now Has a Mission Layer](https://www.linkedin.com/pulse/aauth-now-has-mission-layer-karl-mcguinness-uhqjc/): Mission as a first-class protocol object
-- 2026-03-31 — Christian Posta, [AAuth Full Demo](https://blog.christianposta.com/aauth-full-demo/): Working demo with Keycloak, Agentgateway, Java/Python/Rust
-- 2026-03-21 — Karl McGuinness, [Open-World OAuth Still Needs Mission Shaping](https://notes.karlmcguinness.com/notes/open-world-oauth-still-needs-mission-shaping/): Open-world OAuth, discovery, and bounded authority across delegation chains
-- 2026-03-15 — Karl McGuinness, [Mission Architecture on AAuth](https://notes.karlmcguinness.com/notes/mission-architecture-on-aauth/): Whether AAuth is the right protocol foundation for mission-bound authorization
-- 2026-02-17 — Christian Posta, [Deep Dive AAuth — Identity and Access Management for AI Agents](https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/): Comprehensive overview of AAuth architecture and design
-- 2025-06-02 — Christian Posta, [Do AI Agents Need Their Own Identity?](https://blog.christianposta.com/do-we-even-need-agent-identity/): The case for independent agent identity
+- 2026-04-28 — Mark Hendrickson, [Know Which of Your Agents Wrote What](https://markmhendrickson.com/posts/know-which-of-your-agents-wrote-what/): Per-row attribution for agent writes via AAuth identity in Neotoma.
+- 2026-04-15 — Karl McGuinness, [AAuth Now Has a Mission Layer](https://www.linkedin.com/pulse/aauth-now-has-mission-layer-karl-mcguinness-uhqjc/): Mission as a first-class protocol object.
+- 2026-03-31 — Christian Posta, [AAuth Full Demo](https://blog.christianposta.com/aauth-full-demo/): Working demo with Keycloak, Agentgateway, Java/Python/Rust.
+- 2026-03-21 — Karl McGuinness, [Open-World OAuth Still Needs Mission Shaping](https://notes.karlmcguinness.com/notes/open-world-oauth-still-needs-mission-shaping/): Open-world OAuth, discovery, and bounded authority across delegation chains.
+- 2026-03-15 — Karl McGuinness, [Mission Architecture on AAuth](https://notes.karlmcguinness.com/notes/mission-architecture-on-aauth/): Whether AAuth is the right protocol foundation for mission-bound authorization.
+- 2026-02-17 — Christian Posta, [Deep Dive AAuth — Identity and Access Management for AI Agents](https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/): Comprehensive overview of AAuth architecture and design.
+- 2025-06-02 — Christian Posta, [Do AI Agents Need Their Own Identity?](https://blog.christianposta.com/do-we-even-need-agent-identity/): The case for independent agent identity.
 
 ## Source
 
 - [Specification Source (GitHub)](https://github.com/dickhardt/AAuth)
-- [Website Source (GitHub)](https://github.com/hellocoop/aauth.dev)
+- [Website Source (GitHub)](https://github.com/aauth-dev/www)
