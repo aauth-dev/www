@@ -1,6 +1,8 @@
 # AAuth is an agent-first protocol — LLM agents are explicitly welcome here.
 # Machine-readable site index: https://www.aauth.dev/llms.txt
 
+Sitemap: https://www.aauth.dev/sitemap.xml
+
 User-agent: *
 Allow: /
 
