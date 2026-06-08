@@ -202,8 +202,8 @@
 		{
 			name: 'AAuth Protocol',
 			status: 'Internet-Draft',
-			href: 'https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol',
-			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-protocol.html',
+			href: 'https://datatracker.ietf.org/doc/draft-hardt-oauth-aauth-protocol',
+			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-oauth-aauth-protocol.html',
 			desc: 'The authorization protocol for agent-to-resource access. Four access modes, three token types, agent governance, missions, clarification chat, and call chaining.',
 			primary: true,
 			indent: false

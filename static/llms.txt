@@ -25,7 +25,7 @@ The demos run against the Hello beta Person Server; data is reset regularly.
 
 ## Specifications
 
-- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-aauth-protocol/) — current version: [draft-hardt-aauth-protocol-02](https://datatracker.ietf.org/doc/html/draft-hardt-aauth-protocol-02). The authorization protocol. Four access modes, three token types, agent governance with missions, clarification chat, and call chaining.
+- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-oauth-aauth-protocol/) — current version: [draft-hardt-oauth-aauth-protocol-01](https://datatracker.ietf.org/doc/html/draft-hardt-oauth-aauth-protocol-01). The authorization protocol. Four access modes, three token types, agent governance with missions, clarification chat, and call chaining.
 - [HTTP Signature Keys (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/): Foundation layer. Well-known key discovery, `Signature-Key` header for conveying public keying material alongside HTTP Message Signatures (RFC 9421).
 - [R3 — Rich Resource Requests (Exploratory)](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html): Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL).
 

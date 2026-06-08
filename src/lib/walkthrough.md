@@ -1,4 +1,4 @@
-AAuth is an HTTP authorization protocol that lets agents call protected resources on your behalf using signed requests instead of bearer tokens. The spec is at https://datatracker.ietf.org/doc/html/draft-hardt-aauth-protocol — consult it for any protocol detail. This prompt walks an agent through generating a signing keypair, publishing the public key, making signed calls, and (optionally) uninstalling.
+AAuth is an HTTP authorization protocol that lets agents call protected resources on your behalf using signed requests instead of bearer tokens. The spec is at https://datatracker.ietf.org/doc/html/draft-hardt-oauth-aauth-protocol — consult it for any protocol detail. This prompt walks an agent through generating a signing keypair, publishing the public key, making signed calls, and (optionally) uninstalling.
 
 **Narrate as you go.** Explain each step to the user *as you reach it* — one short sentence on what you're about to do and why, run the command, then show the resulting JSON. Don't save the explanation for the end. For fetch, use each `--explain` event's `description` verbatim and show its raw JSON, and end with the resource's response body.
 
