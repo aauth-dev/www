@@ -29,10 +29,10 @@ npx @aauth/fetch --explain https://whoami.aauth.dev
 Then request identity claims with a forced consent prompt:
 
 ```
-npx @aauth/fetch --explain --force-consent "https://whoami.aauth.dev?scope=openid+profile"
+npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=openid+profile"
 ```
 
-`whoami` echoes back the identity claims the resource sees. `--force-consent` defers the call to the user's Person Server for approval — fetch outputs an **interaction URL**, a short **code**, and a **QR code**. Show the user the URL and QR, offer to open the URL or have them scan the QR with their phone, then wait — fetch resumes automatically once they approve. End with the resource's response body.
+`whoami` echoes back the identity claims the resource sees. `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file — the call is deferred there for approval — fetch outputs an **interaction URL**, a short **code**, and a **QR code**. Show the user the URL and QR, offer to open the URL or have them scan the QR with their phone, then wait — fetch resumes automatically once they approve. End with the resource's response body.
 
 ## 4. Uninstall (optional)
 
