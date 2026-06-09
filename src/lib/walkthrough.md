@@ -34,6 +34,8 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 `whoami` echoes back the identity claims the resource sees. `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file — the call is deferred there for approval — fetch outputs an **interaction URL**, a short **code**, and a **QR code**. Show the user the URL and QR, offer to open the URL or have them scan the QR with their phone, then wait — fetch resumes automatically once they approve. End with the resource's response body.
 
+**How to run it:** `--explain` events (including the URL, code, and QR) are written to **stderr**; only the final response body goes to stdout. The command blocks until the human approves — that can take minutes — but the URL/QR appear within seconds. Run the command in the background (capturing both streams, e.g. `2>&1`), poll the captured output for the `Approve at:` line, and surface the URL + QR to the user **as soon as they appear**. Do not wait for the command to exit before showing them.
+
 ## 4. Uninstall (optional)
 
 Prompt user if they want to uninstall.
