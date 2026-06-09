@@ -1,6 +1,20 @@
 AAuth is an HTTP authorization protocol that lets agents call protected resources on your behalf using signed requests instead of bearer tokens. The spec is at https://datatracker.ietf.org/doc/html/draft-hardt-oauth-aauth-protocol — consult it for any protocol detail. This prompt walks an agent through generating a signing keypair, publishing the public key, making signed calls, and (optionally) uninstalling.
 
-**Narrate as you go.** Explain each step to the user *as you reach it* — one short sentence on what you're about to do and why, run the command, then show the resulting JSON. Don't save the explanation for the end. For fetch, use each `--explain` event's `description` verbatim and show its raw JSON, and end with the resource's response body.
+**Narrate as you go.** Explain each step to the user *as you reach it* — one short sentence on what you're about to do and why, run the command, then show the resulting JSON. Don't save the explanation for the end.
+
+**For `--explain` events specifically: stream them, do not batch.** Each event the command emits is its own narration moment. As each event JSON arrives, print it to the user verbatim alongside its `description` line, then move on to the next. Do NOT collect every event and write a single end-of-flow summary — that loses the step-by-step pedagogy the walkthrough is built around. A good rendering looks like:
+
+> Sending the agent token to the resource — self-asserted identity, no person authorization yet.
+> ```json
+> { "type": "request", "step": "agent_token_request", … }
+> ```
+> The resource needs a person-authorized token — it returned a challenge to exchange.
+> ```json
+> { "type": "response", "step": "agent_token_request", "status": 401, … }
+> ```
+> …
+
+End with the resource's final response body.
 
 ## 1. Check for existing setup
 
