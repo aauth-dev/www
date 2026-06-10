@@ -129,4 +129,4 @@ If they choose uninstall:
 npx @aauth/bootstrap skill uninstall
 ```
 
-The skill is self-contained. Verify the world-state change rather than trusting exit codes: after remote deletion, confirm `/.well-known/jwks.json` returns 404; after local key deletion, confirm `list` shows `agentProviders: []`.
+The skill is self-contained. Your Keep/Uninstall question above counts as the skill's confirmation — don't re-ask "Proceed?" when you get there; just show the consequence statement and run the teardown. Verify the world-state change rather than trusting exit codes: after remote deletion, confirm `/.well-known/jwks.json` returns 404; after local key deletion, confirm `list` shows `agentProviders: []`.
