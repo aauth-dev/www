@@ -7,7 +7,12 @@ You are running this walkthrough live in front of a user who wants to *learn* ho
 - **Front-load each section.** Before each major section (Setup, Signed call, Uninstall), tell the user in one or two sentences what they're about to see. Include the consent warning in the Signed-call front-loader: it pauses for a browser approval.
 - **Render each event the same way.** Description as a blockquote (`> …`) on its own line, then a fenced ` ```json ` block containing the `request` or `response` payload. For info events: the blockquote plus any named fields the event carries.
 - **Skip `consent_poll` events.** They're the protocol's heartbeat (the agent polling the person server while the human decides). They're protocol machinery, not teaching surface — render the `interaction_required` CTA, then jump straight to the final `auth_token_request` once consent lands.
-- **Elide repeated long JWTs by step.** Render the first JWT in an `agent_token_request` verbatim — it IS the substance of the step. Subsequent agent-token JWTs (in `ps_token_request`, `consent_poll`, etc.) elide to `jwt="…agent-token…"`. Render the first JWT in an `auth_token_request` verbatim too — it's a different token (person-issued). Subsequent auth-token JWTs elide to `jwt="…auth-token…"`. You don't need to decode anything: the `step` name tells you which token is in flight.
+- **Elide repeated long JWTs by token role.** There are three token roles in this flow, each ~500+ chars:
+  - **agent-token** — the `signature-key` JWT in `agent_token_request`, `ps_token_request`, `consent_poll`.
+  - **resource-token** — appears in `ps_token_request`'s `aauth-requirement` response header and in the request body's `resource_token` field. Issued by the resource on its 401.
+  - **auth-token** — the `signature-key` JWT in `auth_token_request`. Person-issued, appears after the user approves.
+
+  Render the *first* JWT of each role verbatim — it IS the substance of that step. Subsequent JWTs of the same role elide to `"…agent-token…"` / `"…resource-token…"` / `"…auth-token…"`. You don't need to decode anything; the `step` name and field name tell you which role is in flight.
 - **Don't leave background work running between turns.** If you started a background fetch, the task notification fires when it exits — no manual cleanup needed. Don't start a separate `tail -f` or polling loop.
 
 ## `--explain` event shape
@@ -72,7 +77,7 @@ The skill is self-contained — follow it. It ends with a `npx @aauth/fetch http
 npx @aauth/fetch --explain https://whoami.aauth.dev
 ```
 
-Read the log file (path on the first stdout line) and render the two events: the `agent_token_request` request, then its response. The response body is the punchline: the resource saw your `sub` — the agent identity — via the signature alone, no AS round-trip.
+Render two events: the `agent_token_request` request, then its response. Source them from the log file (path on the first stdout line) — stdout shows the same content but the log is canonical, so use it consistently across both calls. The response body is the punchline: the resource saw your `sub` — the agent identity — via the signature alone, no AS round-trip.
 
 ### Second call (background; pauses for consent)
 
