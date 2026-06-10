@@ -79,7 +79,9 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file.
 
-**How to run the consent flow:** the CLI's first stdout line is `Logging --explain events to <path>` — `<path>` is under `~/.aauth/logs/fetch/`. Run the fetch in the background with a generous timeout (600000ms — humans take minutes to approve), then tail that log file for events. The QR ASCII is appended to the log right after `interaction_required`. Stderr carries the same QR for direct CLI users; only look there if events stop arriving in the log.
+**Where to read events:** every `--explain` run writes its full event stream — and the QR after `interaction_required` — to `~/.aauth/fetch/logs/<ISO-timestamp>.log`. Read events from that log file for **both** calls; **ignore stdout/stderr**. Locate the newest log with `ls -t ~/.aauth/fetch/logs/ | head -1` after starting the command.
+
+**Running the consent call:** because the second call pauses for the human to approve in a browser, run it in the background with a generous timeout (`600000` ms — humans take minutes to approve), then poll the log for events (e.g. `until grep -q "interaction_required" <log>; do sleep 1; done`).
 
 ### The consent moment — make it loud
 
