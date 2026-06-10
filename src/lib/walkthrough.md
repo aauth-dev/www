@@ -6,7 +6,8 @@ You are running this walkthrough live in front of a user who wants to *learn* ho
 
 - **Front-load each section.** Before each major section (Setup, Signed call, Uninstall), tell the user in one or two sentences what they're about to see. Include the consent warning in the Signed-call front-loader: the second call will pause for a browser approval.
 - **Render each event the same way.** Description as a blockquote (`> …`) on its own line, then a fenced ` ```json ` block containing ONLY the value of `request` or `response` (not the `{ step, description, … }` wrapper). For info events: just the blockquote line and any extra fields the event carries (see below). Render every event as it arrives — including repeats like `consent_poll`. The polls are the protocol's heartbeat while waiting on the human; don't suppress them.
-- **Don't leave background work running between turns.** Any background task you started must be stopped before you hand control back. Wide filesystem scans count — check common paths directly before spawning a recursive `find`.
+- **Elide repeated long JWTs.** The first event's `signature-key` JWT renders verbatim — it IS the substance of the step. On reuse, elide identical JWTs to `jwt="…agent-token…"` (or `"…auth-token…"` once the auth token is in play) so each render shows what's new, not 700 chars of the same token.
+- **Don't leave background work running between turns.** Any background task you started must be stopped before you hand control back.
 
 ## `--explain` event shape
 
@@ -64,6 +65,8 @@ The skill is self-contained — follow it. If `list` showed a backup pointing at
 
 After publish, verify the world-state change rather than trusting an exit code: poll both `/.well-known/jwks.json` and `/.well-known/aauth-agent.json` at the agent URL until they return 200.
 
+For a brand-new `username.github.io` repo, the first Pages deploy can 401 silently from `actions/deploy-pages` (the `pages-build-deployment` Action fails but the Pages API reports `status: building` indefinitely). If polling hasn't gone green within ~2 minutes, check the Actions run with `gh run list --repo <user>/<user>.github.io` and re-queue with `gh api -X POST /repos/<user>/<user>.github.io/pages/builds` — the second build picks up the existing artifact and deploys.
+
 ## 3. Make a signed call
 
 **Tell the user up front:** you're going to make two calls. The first proves signed auth works *without* any person authorization — `whoami` echoes the agent identity the resource sees. The second adds person-authorization, and **will pause for you to approve in your browser** — have your phone or browser ready.
@@ -82,7 +85,9 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file.
 
-**Where to read events:** every `--explain` run writes its event stream as JSONL to `~/.aauth/fetch/logs/<ISO-timestamp>.log` — one JSON object per line, nothing else. Read events from that file. Locate the newest log with `ls -t ~/.aauth/fetch/logs/ | head -1`; for the background call, wait briefly for the file to appear (e.g. `until [ -n "$(ls -t ~/.aauth/fetch/logs/ 2>/dev/null | head -1)" ]; do sleep 0.2; done`), then poll for new events with `tail -f`.
+**Where to read events:** every `--explain` run writes its event stream as JSONL to `~/.aauth/fetch/logs/<ISO-timestamp>.log` — one JSON object per line, nothing else. The command's stdout is a colorized preview; the log file is canonical, so read events from the log. For the foreground call, read the log after the command returns. For the background call, the task notification fires when fetch exits — read the log once at that point. No `tail -f` is needed; the fetch's exit is your "events are done" signal.
+
+The log path is also printed on the command's first stdout line (`Logging --explain events to …`). Capture it from that line instead of guessing the newest file in `~/.aauth/fetch/logs/` — that directory may have older logs from prior runs.
 
 ### The consent moment
 
@@ -98,7 +103,7 @@ Then continue rendering events as they arrive — the `consent_poll` request/res
 
 ## 4. Uninstall (optional)
 
-Ask the user once whether they want to uninstall — default to **Keep installed**, listed first (uninstall is destructive; the walkthrough's purpose is "see it work," not "tear it down"). If yes:
+Uninstall is destructive; the walkthrough's purpose is "see it work," not "tear it down". Hand off to the uninstall skill — it builds the consequence statement from `list` and asks once before doing anything, so don't pre-ask here:
 
 ```
 npx @aauth/bootstrap skill uninstall
