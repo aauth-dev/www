@@ -2,16 +2,19 @@ AAuth is an HTTP authorization protocol that lets agents call protected resource
 
 ## Narration rules
 
-You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. Make each protocol step legible: state the goal up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize.
+You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. State the goal of each section up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize, don't paraphrase descriptions, don't write a recap — the last response IS the ending.
 
-- **Front-load each section.** Before each major section (Setup, Signed call, Consent flow, Uninstall), tell the user in one or two sentences what they're about to see. The consent section specifically must warn that the second call will pause for them to approve in a browser — a surprise QR code is a bad UX.
-- **The event's `description` IS the header; the body is `request` or `response`.** For request/response events, render the `description` on its own line above the JSON (a `>` quote or italics — just make it visually distinct), then a fenced JSON block containing ONLY the value of `request` or `response` (not the wrapper with `step`+`description`). For info-only events, render just the description line. Don't paraphrase the description, don't add "Step N —" prefixes, don't write an end-of-flow recap — the last response IS the ending.
-- **World-state, not commands.** When reporting what happened, name the change in the world (a file became reachable; a JWKS endpoint now returns 404; a key now exists in the keystore), not the command you ran. A successful exit code or `git push` is not proof — verify the world-state change before moving on. Especially important for destructive steps.
-- **Don't leave background work running between turns.** Any background task you started must be stopped before you ask the next question, hand control to the user, or end the turn. Wide filesystem scans count — check common paths directly before spawning a recursive `find`.
+- **Front-load each section.** Before each major section (Setup, Signed call, Uninstall), tell the user in one or two sentences what they're about to see. Include the consent warning in the Signed-call front-loader: the second call will pause for a browser approval.
+- **Render each event the same way.** Description as a blockquote (`> …`) on its own line, then a fenced ` ```json ` block containing ONLY the value of `request` or `response` (not the `{ step, description, … }` wrapper). For info events: just the blockquote line and any extra fields the event carries (see below). Render every event as it arrives — including repeats like `consent_poll`. The polls are the protocol's heartbeat while waiting on the human; don't suppress them.
+- **Don't leave background work running between turns.** Any background task you started must be stopped before you hand control back. Wide filesystem scans count — check common paths directly before spawning a recursive `find`.
 
 ## `--explain` event shape
 
-Each event is a single JSON object keyed by `step`, carrying exactly ONE of: a `request` body, a `response` body, or a top-level `description` (info events). `step` is stable across versions — safe for programmatic parsers.
+Every line of the log is one JSON object (JSONL). Each object is keyed by `step` and is one of:
+
+- **Request event** — `{ step, description, request: { method, url, headers, body? } }`.
+- **Response event** — `{ step, response: { status, headers, body? } }`. Pairs with the immediately preceding request by `step`. No `description` — the request's description framed the step.
+- **Info event** — `{ step, description, …named fields }`. Info events may carry additional top-level fields documented per step: e.g. `requirement_parsed` carries `requirement`; `interaction_required` carries `url`, `code`, `approval_url`, `qr`.
 
 ```json
 {
@@ -35,13 +38,13 @@ Each event is a single JSON object keyed by `step`, carrying exactly ONE of: a `
 ```json
 {
   "step": "interaction_required",
-  "description": "Direct the person to the interaction URL to approve.",
+  "description": "Direct the person to the approval URL — show them the QR or open the link.",
   "url": "https://person.hello.coop/auth",
-  "code": "AuArIT7O"
+  "code": "AuArIT7O",
+  "approval_url": "https://person.hello.coop/auth?code=AuArIT7O",
+  "qr": "▄▄▄▄…\n…"
 }
 ```
-
-A response object pairs with the immediately preceding request by `step`. Response events have no `description` — the request's description already framed the step.
 
 ## 1. Check for existing setup
 
@@ -59,19 +62,19 @@ npx @aauth/bootstrap skill setup
 
 The skill is self-contained — follow it. If `list` showed a backup pointing at a prior agent URL + hosting platform, default to reusing those.
 
-After publish, verify the world-state change: poll both `/.well-known/jwks.json` and `/.well-known/aauth-agent.json` at the agent URL until they return 200.
+After publish, verify the world-state change rather than trusting an exit code: poll both `/.well-known/jwks.json` and `/.well-known/aauth-agent.json` at the agent URL until they return 200.
 
 ## 3. Make a signed call
 
 **Tell the user up front:** you're going to make two calls. The first proves signed auth works *without* any person authorization — `whoami` echoes the agent identity the resource sees. The second adds person-authorization, and **will pause for you to approve in your browser** — have your phone or browser ready.
 
-First call:
+First call (foreground; returns in well under a second):
 
 ```
 npx @aauth/fetch --explain https://whoami.aauth.dev
 ```
 
-Then the consent-prompted call:
+Then the consent-prompted call. **Run it in the background** with a generous timeout (`600000` ms — humans take minutes to approve):
 
 ```
 npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=openid+profile"
@@ -79,30 +82,26 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file.
 
-**Where to read events:** every `--explain` run writes its full event stream — and the QR after `interaction_required` — to `~/.aauth/fetch/logs/<ISO-timestamp>.log`. Read events from that log file for **both** calls; **ignore stdout/stderr**. Locate the newest log with `ls -t ~/.aauth/fetch/logs/ | head -1` after starting the command.
+**Where to read events:** every `--explain` run writes its event stream as JSONL to `~/.aauth/fetch/logs/<ISO-timestamp>.log` — one JSON object per line, nothing else. Read events from that file. Locate the newest log with `ls -t ~/.aauth/fetch/logs/ | head -1`; for the background call, wait briefly for the file to appear (e.g. `until [ -n "$(ls -t ~/.aauth/fetch/logs/ 2>/dev/null | head -1)" ]; do sleep 0.2; done`), then poll for new events with `tail -f`.
 
-**Running the consent call:** because the second call pauses for the human to approve in a browser, run it in the background with a generous timeout (`600000` ms — humans take minutes to approve), then poll the log for events (e.g. `until grep -q "interaction_required" <log>; do sleep 1; done`).
+### The consent moment
 
-### The consent moment — make it loud
-
-The `interaction_required` event is your CTA trigger. It carries the approval URL in its `url` field and the short code in its `code` field.
-
-When `interaction_required` arrives, **stop streaming events** and surface a single, visually distinct call to action:
+When the `interaction_required` event arrives, render the CTA from the event's own fields — no assembly required:
 
 - A bold heading (e.g. `**👉 Action needed: approve the consent**`)
-- The `url` from the event, with `?code=<code>` appended, on its own line, raw and clickable
-- The `code` from the event on its own line
-- The QR ASCII (lifted from the log right after the event) inside a fenced code block (no language tag — fences preserve the block characters in monospace)
-- One line telling them you'll wait and resume automatically once they approve
+- `approval_url` on its own line, raw and clickable
+- `code` on its own line
+- `qr` inside a fenced code block with no language tag (fences preserve the block characters in monospace)
+- One line telling them you're waiting and will resume when they approve
 
-Then **go silent**. Resume narration at `auth_token_received` and the subsequent `auth_token_request`. That final event's description names the protocol's punchline directly: the `Signature-Key` now carries a person-issued auth token instead of the agent token.
+Then continue rendering events as they arrive — the `consent_poll` request/response pairs are the protocol's heartbeat while the person decides. Resume normal pacing at `auth_token_received` and the final `auth_token_request`; the response body of that last call is the punchline.
 
 ## 4. Uninstall (optional)
 
-Ask the user once whether they want to uninstall — default to **Keep installed** (uninstall is destructive; the walkthrough's purpose is "see it work," not "tear it down"). If yes:
+Ask the user once whether they want to uninstall — default to **Keep installed**, listed first (uninstall is destructive; the walkthrough's purpose is "see it work," not "tear it down"). If yes:
 
 ```
 npx @aauth/bootstrap skill uninstall
 ```
 
-The skill is self-contained — follow it. World-state verification matters extra here: after remote deletion, confirm `/.well-known/jwks.json` returns 404; after local key deletion, confirm `list` shows `agentProviders: []`.
+The skill is self-contained — follow it. Verify the world-state change rather than trusting exit codes: after remote deletion, confirm `/.well-known/jwks.json` returns 404; after local key deletion, confirm `list` shows `agentProviders: []`.
