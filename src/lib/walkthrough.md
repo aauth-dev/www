@@ -2,19 +2,16 @@ AAuth is an HTTP authorization protocol that lets agents call protected resource
 
 ## Narration rules
 
-You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. Your job is to make each protocol step legible: state the goal up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize.
-
-Concrete rules:
+You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. Make each protocol step legible: state the goal up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize.
 
 - **Front-load each section.** Before each major section (Setup, Signed call, Consent flow, Uninstall), tell the user in one or two sentences what they're about to see. The consent section specifically must warn that the second call will pause for them to approve in a browser — a surprise QR code is a bad UX.
-- **The event's `description` field IS the header.** Each `--explain` event arrives as a JSON object that carries its own one-line `description`, written to align with the spec's vocabulary. Render that line on its own above the JSON block (use a `>` quote or italics — just make it visually distinct), then the JSON in a fenced block. No "Step N —" prefix, no second sentence of your own paraphrase. The descriptions are precise enough to stand alone; don't paraphrase them.
-- **World-state, not commands.** When reporting what happened, name the change in the world (a file became reachable; a JWKS endpoint now returns 404; a key now exists in the keystore), not the command you ran. A successful exit code is not proof — verify the world-state change before moving on. Especially important for destructive steps.
-- **Stream events as they arrive — but don't worry about perfect timing.** A fast flow may emit all its events within a second; render them in arrival order without a separate recap. The pedagogy is each step appearing in the chat *as the protocol executes it*, not a tidy summary at the end. Never collect every event and write an end-of-flow recap.
-- **Don't leave background work running between turns.** Any background task or monitor you start in service of a step must be stopped before you ask the next question, hand control to the user, or end the turn. The user should never inherit a running task from a previous step.
+- **The event's `description` IS the header; the body is `request` or `response`.** For request/response events, render the `description` on its own line above the JSON (a `>` quote or italics — just make it visually distinct), then a fenced JSON block containing ONLY the value of `request` or `response` (not the wrapper with `step`+`description`). For info-only events, render just the description line. Don't paraphrase the description, don't add "Step N —" prefixes, don't write an end-of-flow recap — the last response IS the ending.
+- **World-state, not commands.** When reporting what happened, name the change in the world (a file became reachable; a JWKS endpoint now returns 404; a key now exists in the keystore), not the command you ran. A successful exit code or `git push` is not proof — verify the world-state change before moving on. Especially important for destructive steps.
+- **Don't leave background work running between turns.** Any background task you started must be stopped before you ask the next question, hand control to the user, or end the turn. Wide filesystem scans count — check common paths directly before spawning a recursive `find`.
 
 ## `--explain` event shape
 
-Each event is a single JSON object keyed by `step`, carrying exactly ONE of: a `request` body, a `response` body, or a top-level `description` (info events).
+Each event is a single JSON object keyed by `step`, carrying exactly ONE of: a `request` body, a `response` body, or a top-level `description` (info events). `step` is stable across versions — safe for programmatic parsers.
 
 ```json
 {
@@ -38,15 +35,13 @@ Each event is a single JSON object keyed by `step`, carrying exactly ONE of: a `
 ```json
 {
   "step": "interaction_required",
-  "description": "Direct the person to the interaction URL to approve. (URL + scannable QR follow on stderr for direct CLI users.)",
+  "description": "Direct the person to the interaction URL to approve.",
   "url": "https://person.hello.coop/auth",
   "code": "AuArIT7O"
 }
 ```
 
-A response object pairs with the immediately preceding request by `step`; render them as two distinct events. Response events have no `description` — the request's description already framed the step, and the `status` + `body` carry the rest. **Do NOT re-print the final response body at the end of the walkthrough** — it's already on screen in the last event.
-
-The step vocabulary tracks the AAuth spec: `agent_token_request` and `auth_token_request` are named by the token in the `Signature-Key`; `requirement_parsed` reflects parsing the resource's `AAuth-Requirement` header; `ps_metadata` and `ps_token_request` refer to the person server's well-known metadata and `token_endpoint`; `interaction_required`, `consent_poll`, and `auth_token_received` cover the deferred-response cycle. Two internal steps (`signed_request` for the initial call, `retry_with_auth_token` for the post-consent retry) both display as a token-named step so the chat reads naturally.
+A response object pairs with the immediately preceding request by `step`. Response events have no `description` — the request's description already framed the step.
 
 ## 1. Check for existing setup
 
@@ -62,9 +57,9 @@ If a keypair is already set up, name what's there in one line (agent URL, keysto
 npx @aauth/bootstrap skill setup
 ```
 
-Follow the skill. It generates a keypair, asks where to publish the public key (a JWKS file at an HTTPS URL — GitHub Pages, GitLab Pages, Cloudflare Pages, etc.), and verifies it's reachable. If `list` showed a backup pointing at a prior agent URL + hosting platform, default to reusing those — the skill handles the same-identity, fresh-keys case.
+The skill is self-contained — follow it. If `list` showed a backup pointing at a prior agent URL + hosting platform, default to reusing those.
 
-After the publish step, verify the world-state change: poll both `/.well-known/jwks.json` and `/.well-known/aauth-agent.json` at the agent URL until they return 200. A successful `git push` is not proof; a 200 is.
+After publish, verify the world-state change: poll both `/.well-known/jwks.json` and `/.well-known/aauth-agent.json` at the agent URL until they return 200.
 
 ## 3. Make a signed call
 
@@ -76,8 +71,6 @@ First call:
 npx @aauth/fetch --explain https://whoami.aauth.dev
 ```
 
-The first call's `agent_token_request` description names *identity-based access* — the resource recognized the agent token and returned 200. No person involved.
-
 Then the consent-prompted call:
 
 ```
@@ -86,30 +79,28 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 `--prompt-consent` forces a consent prompt at the user's Person Server even if consent is already on file.
 
-**How to run the consent flow:** `--explain` events (including the URL, code, and QR) are written to **stderr**; only the final response body goes to stdout. The command blocks until the human approves — minutes is normal — but events flow within seconds. Run the command in the background (capturing both streams, e.g. `2>&1`), tail the captured output, and watch for the `interaction_required` event.
+**How to run the consent flow:** the CLI's first stdout line is `Logging --explain events to <path>` — `<path>` is under `~/.aauth/logs/fetch/`. Run the fetch in the background with a generous timeout (600000ms — humans take minutes to approve), then tail that log file for events. The QR ASCII is appended to the log right after `interaction_required`. Stderr carries the same QR for direct CLI users; only look there if events stop arriving in the log.
 
 ### The consent moment — make it loud
 
-The `interaction_required` event is your CTA trigger. It carries the approval URL in its `url` field and the short code in its `code` field. The scannable QR ASCII follows immediately on stderr as the next non-JSON block (still in the captured output — it's there for direct CLI users, you'll inherit it for free).
+The `interaction_required` event is your CTA trigger. It carries the approval URL in its `url` field and the short code in its `code` field.
 
-When `interaction_required` arrives, **stop streaming raw events** and surface a single, visually distinct call to action:
+When `interaction_required` arrives, **stop streaming events** and surface a single, visually distinct call to action:
 
 - A bold heading (e.g. `**👉 Action needed: approve the consent**`)
 - The `url` from the event, with `?code=<code>` appended, on its own line, raw and clickable
 - The `code` from the event on its own line
-- The QR ASCII (lifted from the stderr block right after the event) inside a fenced code block (no language tag — fences preserve the block characters in monospace)
+- The QR ASCII (lifted from the log right after the event) inside a fenced code block (no language tag — fences preserve the block characters in monospace)
 - One line telling them you'll wait and resume automatically once they approve
 
-Then **go silent**. Do not narrate `consent_poll` events as they arrive — they are the deferred-response polling loop and are noise during the wait. Resume narration only when `auth_token_received` arrives (the "person approved — auth token issued" moment) and the resource is re-called with the auth token. That final `auth_token_request` description names the protocol's punchline directly: the `Signature-Key` now carries a person-issued auth token instead of the agent token.
+Then **go silent**. Resume narration at `auth_token_received` and the subsequent `auth_token_request`. That final event's description names the protocol's punchline directly: the `Signature-Key` now carries a person-issued auth token instead of the agent token.
 
 ## 4. Uninstall (optional)
 
-Ask the user once whether they want to uninstall. If yes:
+Ask the user once whether they want to uninstall — default to **Keep installed** (uninstall is destructive; the walkthrough's purpose is "see it work," not "tear it down"). If yes:
 
 ```
 npx @aauth/bootstrap skill uninstall
 ```
 
-Follow the skill. It removes the published JWKS from the hosting platform (by loading the platform's `-uninstall` skill — e.g. `github-pages-uninstall`), then deletes the local signing keys and config. It asks for ONE confirmation that names every consequence; do not stack additional questions in front of it.
-
-**Report each destructive step by its world-state change** (the general rule, applied here): after remote deletion, *"JWKS at \<url\> now returns 404 — resources can no longer verify signatures from this agent."* After local key deletion: confirm `list` shows `agentProviders: []`. A successful `git push` is not proof of remote teardown; a 404 is. Block on these checks before moving on.
+The skill is self-contained — follow it. World-state verification matters extra here: after remote deletion, confirm `/.well-known/jwks.json` returns 404; after local key deletion, confirm `list` shows `agentProviders: []`.
