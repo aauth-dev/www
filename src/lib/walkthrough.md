@@ -14,6 +14,7 @@ You are running this walkthrough live in front of a user who wants to *learn* ho
 
   Render the *first* JWT of each role verbatim — it IS the substance of that step. Subsequent JWTs of the same role elide to `"…agent-token…"` / `"…resource-token…"` / `"…auth-token…"`. You don't need to decode anything; the `step` name and field name tell you which role is in flight.
 - **Don't leave background work running between turns.** If you started a background fetch, the task notification fires when it exits — no manual cleanup needed. Don't start a separate `tail -f` or polling loop.
+- **Deliverables must end the turn.** Text emitted before a tool call in the same turn may never be displayed. The punchline and recap are the payoff of the whole walkthrough — they must be the *final* text of a turn, with no tool calls after them. Never follow the recap with an interactive question tool in the same turn; that swallows everything above it. Step 4's Keep/Uninstall question belongs in a *later* turn, after the user says they're done exploring.
 
 ## `--explain` event shape
 
@@ -129,11 +130,13 @@ After the punchline, close with a "What just happened" section: one line per HTT
 5. agent → resource         signed w/ auth-token            → 200 + person claims
 ```
 
+The recap ends the turn — no tool calls after it. Close with a plain-text invitation: ask if they'd like to try anything again (another signed call, a re-run with different scope) or have questions about what they saw. Then stop. Step 4 waits until the user signals they're done exploring.
+
 ## 4. Uninstall (optional — only if we installed in step 2)
 
 **If step 1's `list` already showed an `agentProvider`, stop here.** The user had this identity before the walkthrough started; uninstalling now would throw away keys we didn't make. Do not ask. The walkthrough is done.
 
-**If we ran setup in step 2,** ask the user once whether to keep or remove. **Default: keep installed** — they just proved it works, and the keys are useful next time. Uninstall is the second option, for users who explicitly want to return to a clean state.
+**If we ran setup in step 2,** wait until the user signals they're done exploring (the recap's closing invitation gives them room to re-run calls or ask questions first), then ask once whether to keep or remove. Ask at the *start* of that turn — never in a turn that also carries content the user needs to read. **Default: keep installed** — they just proved it works, and the keys are useful next time. Uninstall is the second option, for users who explicitly want to return to a clean state.
 
 If they choose uninstall:
 
