@@ -2,15 +2,15 @@ AAuth is an HTTP authorization protocol that lets agents call protected resource
 
 ## Narration rules
 
-You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. State the goal of each section up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize, don't paraphrase descriptions, don't write a recap — the last response IS the ending.
+You are running this walkthrough live in front of a user who wants to *learn* how AAuth works. State the goal of each section up front, run the command, surface the event JSON as it arrives, and let each event's own `description` field do the explaining. Don't editorialize and don't paraphrase descriptions.
 
 - **Front-load each section.** Before each major section (Setup, Signed call, Uninstall), tell the user in one or two sentences what they're about to see. Include the consent warning in the Signed-call front-loader: it pauses for a browser approval.
 - **Render each event the same way.** Description as a blockquote (`> …`) on its own line, then a fenced ` ```json ` block containing the `request` or `response` payload. For info events: the blockquote plus any named fields the event carries.
-- **Skip `consent_poll` events.** They're the protocol's heartbeat (the agent polling the person server while the human decides). They're protocol machinery, not teaching surface — render the `interaction_required` CTA, then jump straight to the final `auth_token_request` once consent lands.
+- **Show the `consent_poll` events too.** They're the agent polling the person server while the human decides — render each pair like any other request/response (JWTs elided per the rule below). Pending polls return `202`; the *final* poll returns `200` and its body carries the freshly issued `auth_token` — that response is where the person server mints the token, so don't bury it.
 - **Elide repeated long JWTs by token role.** There are three token roles in this flow, each ~500+ chars:
   - **agent-token** — the `signature-key` JWT in `agent_token_request`, `ps_token_request`, `consent_poll`.
   - **resource-token** — appears in `ps_token_request`'s `aauth-requirement` response header and in the request body's `resource_token` field. Issued by the resource on its 401.
-  - **auth-token** — the `signature-key` JWT in `auth_token_request`. Person-issued, appears after the user approves.
+  - **auth-token** — first appears as `auth_token` in the final `consent_poll` 200 response body, then as the `signature-key` JWT in `auth_token_request`. Person-issued, appears after the user approves.
 
   Render the *first* JWT of each role verbatim — it IS the substance of that step. Subsequent JWTs of the same role elide to `"…agent-token…"` / `"…resource-token…"` / `"…auth-token…"`. You don't need to decode anything; the `step` name and field name tell you which role is in flight.
 - **Don't leave background work running between turns.** If you started a background fetch, the task notification fires when it exits — no manual cleanup needed. Don't start a separate `tail -f` or polling loop.
@@ -91,12 +91,12 @@ npx @aauth/fetch --explain --prompt-consent "https://whoami.aauth.dev?scope=open
 
 Every `--explain` run writes its event stream as JSONL to `~/.aauth/fetch/logs/<ISO-timestamp>.log` — one JSON object per line. The command's stdout is a colorized preview; the log file is canonical, so read events from the log.
 
-The log path is printed on the command's first stdout line (`Logging --explain events to …`). For the background call:
+The log filename is the launch time, so the path is deterministic — don't scrape the command's stdout or tail its output file. List `~/.aauth/fetch/logs/` and take the newest `.log` file created after you launched (ISO names sort lexicographically). For the background call:
 
-1. Wait for that first stdout line, then capture the path.
+1. List the logs directory and capture the new file's path.
 2. Poll the log until the `interaction_required` event appears, then render everything up through that event as the CTA.
 3. Wait for the task notification (fetch exits when consent is granted and the final call returns).
-4. After the notification, re-read the log and render only the final `auth_token_request` request/response pair. **Skip every `consent_poll` event** — they were heartbeat while you were waiting; rendering them after the fact is noise.
+4. After the notification, re-read the log and render everything after `interaction_required`: each `consent_poll` pair (202s while the human decided, then the 200 whose body carries the issued `auth_token`), and the final `auth_token_request` request/response pair.
 
 ### The consent moment
 
@@ -116,6 +116,18 @@ Then on the lines below the heading:
 ### The punchline
 
 When fetch exits, the log ends with one `auth_token_request` request/response pair. Render those two events. The response body — `sub`, `agent`, `tenant`, `name`, `email` — is the punchline: the resource now sees both who is calling (`agent`) and on whose behalf (`sub` + claims vouched by the person server).
+
+### The recap
+
+After the punchline, close with a "What just happened" section: one line per HTTP exchange of the consent flow, in order, naming who called whom, which token rode in the request, and what came back — the whole dance at a glance. Annotate each line from what actually appeared in the events; don't invent detail. Format:
+
+```
+1. agent → resource         signed w/ agent-token           → 401 + resource-token (scope, agent binding)
+2. agent → person server    resource-token, prompt=consent  → 202 pending + approval code
+3. person → person server   approves in browser
+4. agent → person server    poll                            → 200 + auth-token (person-issued, key-bound)
+5. agent → resource         signed w/ auth-token            → 200 + person claims
+```
 
 ## 4. Uninstall (optional — only if we installed in step 2)
 
