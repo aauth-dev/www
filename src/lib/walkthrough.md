@@ -13,9 +13,10 @@ The user reads in chat; pace the output so each piece lands alone.
 
 - **One section per turn.** Each protocol exchange (or tight group, like the consent polls) is its own turn-ending message: the event's `summary` line on top, then the rendered events per the fetch skill. End the turn; the user's reply advances to the next section. Never bundle two sections into one message.
 - **Front-load each phase.** Before Setup, the calls, and Uninstall, say in one or two sentences what's coming. The second call's front-loader must warn that it pauses for a browser approval.
+- **Tell the user how to advance.** The front-loader before the first call must say the walkthrough pauses after each section and that replying with anything ("ok") advances it. Don't use a question prompt as the advance mechanism — a tool call after section text can swallow the text above it, so sections must end as plain text.
 - **The CTA turn contains ONLY the CTA.** The moment `interaction_required` arrives, emit its `approval_url` (clickable), `code`, and `qr` (fenced code block, no language tag) plus one line saying you're waiting — nothing else in that turn. Latency here is the user staring at a spinner.
 - **Deliverables end the turn.** Text emitted before a tool call in the same turn may never be displayed. The punchline must be the final text of its turn — no tool calls and no question tools after it.
-- **No recap table, no closing invitation.** The per-section `summary` lines are the recap. After the punchline's explanation, stop.
+- **No recap table, no closing invitation.** The per-section `summary` lines are the recap. After the punchline's explanation, stop — with one exception: if we installed this run, the punchline's final line tells the user one more reply brings the keep-or-uninstall question (see step 4). Without that line the user doesn't know the walkthrough has one turn left.
 - **Don't leave background work running between turns.** The task notification fires when the background fetch exits — no polling loops, no `tail -f`.
 
 ## 1. Check for existing setup
@@ -59,7 +60,7 @@ Then, one section per turn, the user advancing between them:
 1. **The 401 exchange** — agent-token call → 401 + resource-token.
 2. **The person-server exchange** — resource-token POSTed → 202 pending + approval code — immediately followed by **the CTA turn** (only the CTA; see Pacing).
 3. **After the task notification: the consent polls** — 202s while the person decided, then the 200 whose body carries the freshly issued `auth_token`. That 200 is where the person server mints the token — don't bury it.
-4. **The punchline** — the `auth_token_request` pair. The response body (`sub`, `agent`, `name`, `email`) shows the resource now sees both who is calling and on whose behalf, with claims the person server vouched for. This ends the turn; nothing follows it.
+4. **The punchline** — the `auth_token_request` pair. The response body (`sub`, `agent`, `name`, `email`) shows the resource now sees both who is calling and on whose behalf, with claims the person server vouched for. This ends the turn. If we installed this run, close with one line saying a reply brings the keep-or-uninstall question; otherwise nothing follows the explanation.
 
 ## 4. Keep or uninstall (only if we installed in step 2)
 
