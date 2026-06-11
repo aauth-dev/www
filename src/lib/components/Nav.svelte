@@ -20,11 +20,10 @@
 	}
 
 	const links = [
-		{ href: '#why-aauth', label: 'Why AAuth' },
-		{ href: '#how-it-works', label: 'How It Works' },
-		{ href: '#get-started', label: 'Explore AAuth' },
-		{ href: '#community', label: 'Community' },
-		{ href: '#events', label: 'Events' }
+		{ href: '#why-aauth', label: 'Why AAuth?' },
+		{ href: '#how-it-works', label: 'How AAuth Works' },
+		{ href: '#deep-dives', label: 'Deep Dives' },
+		{ href: '#community', label: 'Community' }
 	];
 </script>
 

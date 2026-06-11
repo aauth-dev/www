@@ -32,6 +32,7 @@
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
 	let aauthNightTrigger = $state(0);
+	let officeHoursTrigger = $state(0);
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -130,16 +131,6 @@
 			setTimeout(() => { if (copiedIdx === idx) copiedIdx = -1; }, 1800);
 		} catch {}
 	}
-
-	let lumaTheme = $state('dark');
-	$effect(() => {
-		if (typeof window === 'undefined') return;
-		const mql = window.matchMedia('(prefers-color-scheme: light)');
-		const update = () => (lumaTheme = mql.matches ? 'light' : 'dark');
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	});
 
 	const modes = [
 		{
@@ -277,6 +268,13 @@
 	];
 
 	const deepDives = [
+		{
+			title: 'The Errand: What Sending a Kid to the Shop Teaches Us About Agentic Delegation',
+			author: 'Dasith Wijesiriwardena',
+			desc: 'A corner-shop errand analogy for how AAuth lets agents act safely on a user\'s behalf',
+			href: 'https://dasith.me/2026/06/10/the-errand-agentic-delegation/',
+			date: '2026-06-10'
+		},
 		{
 			title: 'Insecure Agents Podcast: Moving Beyond OAuth and the Future of Agent Auth',
 			author: 'Dick Hardt',
@@ -662,18 +660,11 @@
 
 
 
-<!-- Get Started -->
-<section id="get-started" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
+<!-- Demos & Tools -->
+<section class="py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Explore AAuth</h2>
-			<p class="text-[var(--color-text-muted)] mb-12 text-lg">
-				Try the protocol, explore the SDKs, and follow the conversation.
-			</p>
-		</InView>
-
-		<InView>
-			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4">Demos &amp; Tools</h3>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Demos &amp; Tools</h2>
 		</InView>
 		<div class="grid grid-cols-1 gap-4 mb-9">
 			{#each demos as demo, i}
@@ -723,8 +714,15 @@
 			{/each}
 		</div>
 
+	</div>
+</section>
+
+
+<!-- Specs & SDKs -->
+<section class="py-[1.82rem] md:py-[3.12rem]">
+	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4">Specs &amp; SDKs</h3>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Specs &amp; SDKs</h2>
 		</InView>
 		<div
 			class="grid grid-cols-1 sm:grid-cols-2 gap-3"
@@ -790,8 +788,15 @@
 			{/each}
 		</div>
 
+	</div>
+</section>
+
+
+<!-- Deep Dives -->
+<section id="deep-dives" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
+	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h3 class="text-xl font-bold text-[var(--color-text)] opacity-80 mb-4 mt-9">Articles &amp; Talks</h3>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Deep Dives</h2>
 		</InView>
 		<InView>
 			<div
@@ -928,21 +933,21 @@
 						<DecryptText text="Register ↗" trigger={aauthNightTrigger} />
 					</a>
 				</div>
-				<!-- <div>
-					<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
-					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">Drop in to ask questions, share what you're building, or listen along.</p>
-					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)]">
-						<iframe
-							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
-							width="600"
-							height="650"
-							style="border: 0; width: 100%; display: block;"
-							loading="lazy"
-						allow="fullscreen; payment"
-							title="AAuth Office Hours calendar"
-						></iframe>
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+					<div>
+						<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Drop in to ask questions, share what you're building, or listen along. Monthly sessions through September.</p>
 					</div>
-				</div> -->
+					<a
+						href="https://lu.ma/aauth"
+						target="_blank"
+						rel="noopener"
+						onmouseenter={() => officeHoursTrigger++}
+						class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+					>
+						<DecryptText text="View calendar ↗" trigger={officeHoursTrigger} />
+					</a>
+				</div>
 			</div>
 		</InView>
 	</div>
