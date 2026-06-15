@@ -335,6 +335,7 @@
 
 	const authorAvatars = {
 		'Christian Posta': '/authors/christian-posta.jpg',
+		'Dasith Wijesiriwardena': '/authors/dasith-wijesiriwardena.jpg',
 		'Karl McGuinness': '/authors/karl-mcguinness.png',
 		'Mark Hendrickson': '/authors/mark-hendrickson.jpg',
 		'Dick Hardt': '/authors/dick-hardt.jpg'
