@@ -89,39 +89,25 @@
 
 	const demos = [
 		{
-			name: 'Have your agent walk you through AAuth',
+			name: 'Walkthrough AAuth with your agent',
 			iconPath: 'M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z',
 			desc: 'Paste this prompt into Claude Code, Cursor, or any CLI agent. The agent bootstraps itself, calls whoami.aauth.dev, and narrates each protocol event as it runs.',
 			prompt: cliPrompt,
 			source: null
-		},
-		{
-			name: 'Web Agent Demo: whoami',
-			logo: '/demos/whoami.png',
-			desc: "A minimal AAuth identity resource — one endpoint that returns who the caller is.",
-			primary: 'https://playground.aauth.dev',
-			primaryLabel: 'Try it',
-			source: 'https://github.com/aauth-dev/whoami'
-		},
-		{
-			name: 'Web Agent Demo: notes',
-			logo: '/demos/notes.png',
-			desc: "A notes API using <a href=\"https://github.com/dickhardt/AAuth/blob/main/draft-hardt-aauth-r3.md\" target=\"_blank\" rel=\"noopener\" class=\"text-[var(--color-text)] hover:underline\">AAuth R3 ↗</a>. Agents declare OpenAPI operations; consent is over actions, not endpoints.",
-			primary: 'https://playground.aauth.dev',
-			primaryLabel: 'Try it',
-			source: 'https://github.com/aauth-dev/notes'
-		},
-		{
-			name: 'Protocol Explorer',
-			iconPath: 'm21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z',
-			desc: 'Browse AAuth access modes, tokens, and headers with side-by-side wire examples.',
-			primary: 'https://explorer.aauth.dev',
-			primaryLabel: 'Open Explorer',
-			source: null
 		}
 	];
 
-	let demoTriggers = $state([0, 0, 0, 0]);
+	let demoTriggers = $state([0]);
+
+	let lumaTheme = $state('dark');
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+		const mql = window.matchMedia('(prefers-color-scheme: light)');
+		const update = () => (lumaTheme = mql.matches ? 'light' : 'dark');
+		update();
+		mql.addEventListener('change', update);
+		return () => mql.removeEventListener('change', update);
+	});
 	let copiedIdx = $state(-1);
 
 	async function copyPrompt(text, idx) {
@@ -136,7 +122,7 @@
 		{
 			name: 'Identity Based',
 			parties: 'Agent + Resource',
-			desc: 'Resource authorizes off the agent identifier alone — no authorization flow, no tokens beyond the agent token.',
+			desc: 'API keys replaced with a cryptographic agent identifier — no more shared secrets to leak.',
 			steps: [
 				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token'] },
 				{ from: 'Resource', to: 'Agent', lines: ['200 OK'], dashed: true }
@@ -145,7 +131,7 @@
 		{
 			name: 'Resource Managed',
 			parties: 'Agent + Resource',
-			desc: 'Resource handles authorization itself — via user interaction, consent, or an existing OAuth / OIDC provider.',
+			desc: 'Bridge to OAuth 2.0 — the resource handles authorization via its existing OAuth AS,<br>and returns an opaque AAuth Access Token the agent presents on repeat calls with DPoP.',
 			steps: [
 				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token'] },
 				{ from: 'Resource', to: 'Agent', lines: ['202 (interaction required)'], dashed: true },
@@ -159,7 +145,7 @@
 		{
 			name: 'Person Server Managed',
 			parties: 'Agent + Resource + Person Server',
-			desc: "Person Server handles authorization for the user — issuing the auth token after consent.",
+			desc: "Native AAuth — the resource requires the user's identity or consent (or both).<br>The user's Person Server issues an auth token after the user approves.",
 			steps: [
 				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token', 'POST /authorize'] },
 				{ from: 'Resource', to: 'Agent', lines: ['resource_token', '(aud = Person Server URL)'], dashed: true },
@@ -172,7 +158,7 @@
 		{
 			name: 'Federated',
 			parties: 'Agent + Resource + Person Server + Access Server',
-			desc: "Access Server handles authorization for the resource — federating with the agent's Person Server across trust domains.",
+			desc: "Cross-domain AAuth — the resource has its own Access Server that federates with the agent's Person Server.<br>Authorization works across org and cloud boundaries without pre-registration.",
 			steps: [
 				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token', 'POST /authorize'] },
 				{ from: 'Resource', to: 'Agent', lines: ['resource_token', '(aud = Access Server URL)'], dashed: true },
@@ -204,12 +190,12 @@
 			status: 'Internet-Draft',
 			href: 'https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/',
 			editorsCopy: 'https://dickhardt.github.io/signature-key/draft-hardt-httpbis-signature-key.html',
-			desc: 'Foundation layer. Well-known key discovery, the Signature-Key header for conveying public keying material alongside HTTP Message Signatures.',
+			desc: 'How agents establish their cryptographic identity — well-known key discovery and the Signature-Key header for publishing public keys alongside HTTP Message Signatures.',
 			primary: false,
-			indent: true
+			indent: false
 		},
 		{
-			name: 'R3 — Rich Resource Requests',
+			name: 'AAuth Rich Resource Requests (R3)',
 			status: 'Exploratory',
 			href: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html',
 			editorsCopy: null,
@@ -580,7 +566,7 @@
 			<div>
 				<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
 					<div class="p-6">
-						<p class="text-[var(--color-text-muted)] mb-6">{modes[activeMode].desc}</p>
+						<p class="text-[var(--color-accent)] font-medium mb-6">{@html modes[activeMode].desc}</p>
 						<!-- Mobile / tablet: vertical step-list -->
 						<div class="lg:hidden bg-[var(--color-bg-code)] rounded-lg p-5">
 							<ol class="space-y-3">
@@ -641,154 +627,157 @@
 	</div>
 </section>
 
-<!-- The 202 Pattern (commented out — redundant with Resource Managed diagram)
+<!-- Protocol Explorer -->
 <section class="py-[1.82rem] md:py-[3.12rem]">
-	<div class="max-w-4xl mx-auto px-5 md:px-8">
+	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold text-center mb-4 uppercase">On the Wire</h2>
-			<p class="text-center text-[var(--color-text-muted)] max-w-2xl mx-auto mb-12 text-lg">
-				The Resource Managed flow as raw HTTP — showing Signature-Key, AAuth-Requirement, and AAuth-Access headers.
-			</p>
-		</InView>
-		<InView>
-			<div class="rounded-xl border bg-[var(--color-bg-card)] overflow-hidden p-6 font-mono text-sm leading-loose">
-				[wire example removed]
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+				<div>
+					<h3 class="font-mono font-semibold mb-1">Protocol Explorer</h3>
+					<p class="text-sm text-[var(--color-text-muted)]">Browse AAuth access modes, tokens, and headers with side-by-side wire examples.</p>
+				</div>
+				<a
+					href="https://explorer.aauth.dev"
+					target="_blank"
+					rel="noopener"
+					onmouseenter={() => getStartedTrigger++}
+					class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+				>
+					<DecryptText text="Open Explorer ↗" trigger={getStartedTrigger} />
+				</a>
 			</div>
 		</InView>
 	</div>
 </section>
--->
 
 
-
-<!-- Demos & Tools -->
-<section class="py-[1.82rem] md:py-[3.12rem]">
+<!-- Walkthrough Demo -->
+<section id="walkthrough" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Demos &amp; Tools</h2>
+			<h2 class="text-3xl md:text-4xl font-bold mb-6 uppercase">Walkthrough Demo</h2>
+			<ul class="text-[var(--color-text-muted)] mb-6 space-y-1.5 text-sm list-none">
+				<li class="flex items-start gap-2"><span class="text-[var(--color-accent)] font-mono">›</span> Bootstrap your own agent identity and keys</li>
+				<li class="flex items-start gap-2"><span class="text-[var(--color-accent)] font-mono">›</span> Call the whoami AAuth resource</li>
+				<li class="flex items-start gap-2"><span class="text-[var(--color-accent)] font-mono">›</span> Learn the protocol step by step</li>
+				<li class="flex items-start gap-2"><span class="text-[var(--color-accent)] font-mono">›</span> Optionally uninstall when done</li>
+			</ul>
+			<p class="text-[var(--color-text-muted)] text-lg mb-6 leading-relaxed">
+				Paste the prompt below into Claude Code, Cursor, or any CLI agent — your agent walks you through AAuth hands-on.
+			</p>
 		</InView>
-		<div class="grid grid-cols-1 gap-4 mb-9">
-			{#each demos as demo, i}
-				<InView class="h-full">
-					<div class="h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col">
-						<h3 class="font-mono font-semibold mb-2 flex items-center gap-3">
-							{#if demo.logo}
-								<img src={demo.logo} alt="" width="32" height="32" class="inline-block" />
-							{:else if demo.iconPath}
-								<svg class="w-8 h-8 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-									<path stroke-linecap="round" stroke-linejoin="round" d={demo.iconPath} />
-								</svg>
-							{/if}
-							{demo.name}
-						</h3>
-						<p class="text-sm text-[var(--color-text-muted)] mb-5 leading-relaxed">{@html demo.desc}</p>
-						{#if demo.prompt}
-							<pre class="mb-4 p-3 rounded-lg bg-[var(--color-bg-code)] border border-[var(--color-border)] text-xs text-[var(--color-text-muted)] font-mono leading-relaxed max-h-36 overflow-y-auto whitespace-pre-wrap break-words">{demo.prompt}</pre>
-						{/if}
-						<div class="mt-auto flex flex-wrap gap-4 text-sm">
-							{#if demo.prompt}
-								<button
-									type="button"
-									onclick={() => copyPrompt(demo.prompt, i)}
-									onmouseenter={() => (demoTriggers[i] = demoTriggers[i] + 1)}
-									class="text-[var(--color-accent)] no-underline cursor-pointer bg-transparent border-0 p-0 font-inherit"
-								>
-									<DecryptText text={copiedIdx === i ? 'Copied ✓' : 'Copy prompt'} trigger={demoTriggers[i]} />
-								</button>
-							{:else}
-								<a
-									href={demo.primary}
-									target="_blank"
-									rel="noopener"
-									onmouseenter={() => (demoTriggers[i] = demoTriggers[i] + 1)}
-									class="text-[var(--color-accent)] no-underline"
-								>
-									<DecryptText text={`${demo.primaryLabel} ↗`} trigger={demoTriggers[i]} />
-								</a>
-							{/if}
-							{#if demo.source}
-								<a href={demo.source} target="_blank" rel="noopener" class="text-[var(--color-text-muted)] no-underline hover:underline">Source ↗</a>
-							{/if}
-						</div>
-					</div>
-				</InView>
-			{/each}
-		</div>
-
+		<InView>
+			<div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] overflow-hidden">
+				<pre class="p-5 text-xs text-[var(--color-text-muted)] font-mono leading-relaxed max-h-52 overflow-y-auto whitespace-pre-wrap break-words">{cliPrompt}</pre>
+				<div class="border-t border-[var(--color-border)] px-5 py-3 flex items-center justify-between gap-4">
+					<span class="text-xs text-[var(--color-text-dim)] font-mono truncate">walkthrough.md — copy and paste into your agent</span>
+					<button
+						type="button"
+						onclick={() => copyPrompt(cliPrompt, 0)}
+						onmouseenter={() => (demoTriggers[0] = demoTriggers[0] + 1)}
+						class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] text-sm font-medium cursor-pointer border-0"
+					>
+						<DecryptText text={copiedIdx === 0 ? 'Copied ✓' : 'Copy prompt'} trigger={demoTriggers[0]} />
+					</button>
+				</div>
+			</div>
+		</InView>
 	</div>
 </section>
 
 
-<!-- Specs & SDKs -->
+<!-- Specs -->
+<section id="specs" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
+	<div class="max-w-7xl mx-auto px-5 md:px-8">
+		<InView>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Specs</h2>
+		</InView>
+
+		<InView>
+			<a
+				href="https://github.com/dickhardt/AAuth"
+				target="_blank"
+				rel="noopener"
+				class="flex items-center gap-3 mb-6 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline hover:scale-[1.01] transition-transform duration-200"
+			>
+				<svg class="w-5 h-5 shrink-0 text-[var(--color-text)]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z" />
+				</svg>
+				<div>
+					<span class="font-semibold text-sm">dickhardt/AAuth on GitHub</span>
+					<span class="text-[var(--color-text-muted)] text-sm"> — issues, discussions, and development</span>
+				</div>
+			</a>
+		</InView>
+
+		<InView>
+			<div class="space-y-3">
+				{#each specs as spec}
+					<a
+						href={spec.href}
+						target="_blank"
+						rel="noopener"
+						class="glow-card flex items-start justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline hover:scale-[1.01] transition-transform duration-200"
+					>
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2 mb-1 flex-wrap">
+								<h3 class="font-semibold text-sm">{spec.name}</h3>
+								<span class="text-xs font-mono text-[var(--color-text-dim)] border border-[var(--color-border)] rounded px-1.5 py-0.5">{spec.status}</span>
+							</div>
+							<p class="text-sm text-[var(--color-text-muted)]">{spec.desc}</p>
+						</div>
+						{#if spec.editorsCopy}
+							<a
+								href={spec.editorsCopy}
+								target="_blank"
+								rel="noopener"
+								onclick={(e) => e.stopPropagation()}
+								class="shrink-0 text-xs text-[var(--color-text-dim)] hover:text-[var(--color-accent)] no-underline whitespace-nowrap mt-0.5"
+							>editor's copy ↗</a>
+						{/if}
+					</a>
+				{/each}
+			</div>
+		</InView>
+	</div>
+</section>
+
+
+<!-- SDKs -->
 <section class="py-[1.82rem] md:py-[3.12rem]">
 	<div class="max-w-7xl mx-auto px-5 md:px-8">
 		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Specs &amp; SDKs</h2>
+			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">SDKs</h2>
 		</InView>
-		<div
-			class="grid grid-cols-1 sm:grid-cols-2 gap-3"
-			onmousemove={(e) => {
-				const cards = e.currentTarget.querySelectorAll('.glow-card');
-				cards.forEach((card) => {
-					const r = card.getBoundingClientRect();
-					card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-					card.style.setProperty('--my', `${e.clientY - r.top}px`);
-					const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
-					const dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
-					card.style.setProperty('--glow-opacity', Math.hypot(dx, dy) < 120 ? '1' : '0');
-				});
-			}}
-			onmouseleave={(e) => {
-				e.currentTarget.querySelectorAll('.glow-card').forEach((c) => {
-					c.style.setProperty('--glow-opacity', '0');
-				});
-			}}
-		>
-			{#each platforms as platform}
-				<InView class="h-full">
+		<InView>
+			<div class="space-y-3">
+				{#each platforms.filter(p => p.name !== 'Specifications') as platform}
 					<a
 						href={platform.href}
 						target="_blank"
 						rel="noopener"
-						class="glow-card block h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
+						class="glow-card flex items-start gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline hover:scale-[1.01] transition-transform duration-200"
 					>
-						<h3 class="font-semibold mb-1 flex items-center gap-2">
+						<div class="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center">
 							{#if platform.iconPath}
 								<svg class="w-[18px] h-[18px] text-[var(--color-text)]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 									<path stroke-linecap="round" stroke-linejoin="round" d={platform.iconPath} />
 								</svg>
-							{:else if platform.iconPathFilled}
-								<svg class="w-[18px] h-[18px] text-[var(--color-text)]" viewBox="0 0 24 24" fill="currentColor">
-									<path d={platform.iconPathFilled} />
-								</svg>
-							{:else if platform.iconGlyph}
-								<span class="font-mono text-[var(--color-text)] w-[18px] text-center">{platform.iconGlyph}</span>
 							{:else}
 								<picture>
-									<source
-										srcset={`https://cdn.simpleicons.org/${platform.icon}/0f172a`}
-										media="(prefers-color-scheme: light)"
-									/>
-									<img
-										src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`}
-										alt=""
-										width="18"
-										height="18"
-										class="inline-block"
-									/>
+									<source srcset={`https://cdn.simpleicons.org/${platform.icon}/0f172a`} media="(prefers-color-scheme: light)" />
+									<img src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`} alt="" width="18" height="18" class="inline-block" />
 								</picture>
 							{/if}
-							{platform.name}
-							{#if !platform.available}
-								<span class="text-xs text-[var(--color-text-dim)] font-normal ml-2">wanted</span>
-							{/if}
-						</h3>
-						<p class="text-sm text-[var(--color-text-muted)]">{platform.desc}</p>
+						</div>
+						<div class="flex-1 min-w-0">
+							<h3 class="font-semibold text-sm mb-1">{platform.name}</h3>
+							<p class="text-sm text-[var(--color-text-muted)]">{platform.desc}</p>
+						</div>
 					</a>
-				</InView>
-			{/each}
-		</div>
-
+				{/each}
+			</div>
+		</InView>
 	</div>
 </section>
 
@@ -908,43 +897,54 @@
 			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
-			<div class="grid gap-6">
-				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
-					<div class="flex items-center gap-4">
-						<img
-							src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=400,height=400/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
-							alt="AAuth Night"
-							width="192"
-							height="192"
-							loading="lazy"
-							class="w-32 h-32 sm:w-48 sm:h-48 rounded-lg object-cover shrink-0"
-						/>
-						<div>
-							<h3 class="font-mono font-semibold mb-2">AAuth Night</h3>
-							<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
-						</div>
+			<div class="grid gap-6 md:grid-cols-2">
+				<!-- AAuth Night -->
+				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
+					<img
+						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=400/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
+						alt="AAuth Night"
+						width="800"
+						height="400"
+						loading="lazy"
+						class="w-full rounded-lg object-cover"
+					/>
+					<div class="flex-1">
+						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
 					</div>
 					<a
 						href="https://luma.com/event/evt-DaVOoSlMt1iCiJD?utm_source=aauth.dev"
 						target="_blank"
 						rel="noopener"
 						onmouseenter={() => aauthNightTrigger++}
-						class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 					>
 						<DecryptText text="Register ↗" trigger={aauthNightTrigger} />
 					</a>
 				</div>
-				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]">
+				<!-- Office Hours -->
+				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
 					<div>
-						<h3 class="font-mono font-semibold mb-2">Office Hours</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Drop in to ask questions, share what you're building, or listen along. Monthly sessions through September.</p>
+						<h3 class="font-mono font-semibold mb-1">Office Hours</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-3">Drop in to ask questions, share what you're building, or listen along. Monthly sessions through September.</p>
+					</div>
+					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] flex-1">
+						<iframe
+							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
+							width="600"
+							height="400"
+							style="border: 0; width: 100%; display: block;"
+							loading="lazy"
+							allow="fullscreen; payment"
+							title="AAuth Office Hours calendar"
+						></iframe>
 					</div>
 					<a
 						href="https://lu.ma/aauth"
 						target="_blank"
 						rel="noopener"
 						onmouseenter={() => officeHoursTrigger++}
-						class="shrink-0 font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 					>
 						<DecryptText text="View calendar ↗" trigger={officeHoursTrigger} />
 					</a>
