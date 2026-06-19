@@ -900,18 +900,18 @@
 			<div class="grid gap-6 md:grid-cols-2">
 				<!-- AAuth Night -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
+					<div>
+						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
+					</div>
 					<img
 						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=400/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
 						alt="AAuth Night"
 						width="800"
 						height="400"
 						loading="lazy"
-						class="w-full rounded-lg object-cover"
+						class="w-full rounded-lg object-cover flex-1"
 					/>
-					<div class="flex-1">
-						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
-					</div>
 					<a
 						href="https://luma.com/event/evt-DaVOoSlMt1iCiJD?utm_source=aauth.dev"
 						target="_blank"
