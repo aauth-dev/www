@@ -186,11 +186,11 @@
 			indent: false
 		},
 		{
-			name: 'HTTP Signature Keys',
+			name: 'AAuth Bootstrapping',
 			status: 'Internet-Draft',
-			href: 'https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/',
-			editorsCopy: 'https://dickhardt.github.io/signature-key/draft-hardt-httpbis-signature-key.html',
-			desc: 'How agents establish their cryptographic identity — well-known key discovery and the Signature-Key header for publishing public keys alongside HTTP Message Signatures.',
+			href: 'https://github.com/dickhardt/AAuth/blob/main/draft-hardt-aauth-bootstrap.md',
+			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-bootstrap.html',
+			desc: 'Guidance for agent providers on enrolling agents and issuing AAuth agent tokens — per-platform key handling, optional platform attestation, agent identifier strategies, and refresh patterns.',
 			primary: false,
 			indent: false
 		},
@@ -910,7 +910,7 @@
 						width="800"
 						height="400"
 						loading="lazy"
-						class="w-full rounded-lg object-cover flex-1"
+						class="w-full rounded-lg"
 					/>
 					<a
 						href="https://luma.com/event/evt-DaVOoSlMt1iCiJD?utm_source=aauth.dev"
