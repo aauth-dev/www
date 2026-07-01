@@ -362,7 +362,7 @@
 
 		<div class="flex justify-center gap-4 flex-wrap mb-16">
 			<a
-				href="https://playground.aauth.dev"
+				href="#walkthrough"
 				onmouseenter={() => playgroundTrigger++}
 				class="font-display inline-flex items-center justify-center gap-2 px-7 py-3.5 w-full sm:w-auto rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 			>
