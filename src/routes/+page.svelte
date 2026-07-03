@@ -31,7 +31,6 @@
 	let getStartedTrigger = $state(0);
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
-	let aauthNightTrigger = $state(0);
 	let officeHoursTrigger = $state(0);
 
 	let layersVisible = $state(false);
@@ -900,27 +899,15 @@
 			<div class="grid gap-6 md:grid-cols-2">
 				<!-- AAuth Night -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
-					<div>
-						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Join us in person in San Francisco for an evening of AAuth demos and discussions.</p>
-					</div>
+					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Our first AAuth Night was a huge success — thanks to everyone who came out. The next one lands in early October in San Francisco during SF Tech Week.</p>
 					<img
-						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=400/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
+						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=800/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
 						alt="AAuth Night"
 						width="800"
-						height="400"
+						height="800"
 						loading="lazy"
 						class="w-full rounded-lg"
 					/>
-					<a
-						href="https://luma.com/event/evt-DaVOoSlMt1iCiJD?utm_source=aauth.dev"
-						target="_blank"
-						rel="noopener"
-						onmouseenter={() => aauthNightTrigger++}
-						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
-					>
-						<DecryptText text="Register ↗" trigger={aauthNightTrigger} />
-					</a>
 				</div>
 				<!-- Office Hours -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
