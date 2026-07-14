@@ -1,5 +1,10 @@
 name = "aauth-dev"
 compatibility_date = "2024-12-01"
+
+# Opt in to the account-level Workers Trace Events Logpush job (forensic
+# archive: R2 bucket cloudflare-managed-3941311c, WEUR). Per-worker opt-in
+# is required — without this the account job ignores the worker.
+logpush = true
 main = "worker/index.js"
 
 [assets]
