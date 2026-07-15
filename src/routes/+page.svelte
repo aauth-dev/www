@@ -32,6 +32,7 @@
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
 	let officeHoursTrigger = $state(0);
+	let aauthNightTrigger = $state(0);
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -253,6 +254,18 @@
 	];
 
 	const deepDives = [
+		{
+			title: 'AAuth Night: Moving Beyond OAuth',
+			author: ['Dick Hardt', 'Karl McGuinness'],
+			desc: 'Talks and demos from the first AAuth Night — July 2026, AI Engineer World\'s Fair',
+			date: '2026-07-01',
+			links: [
+				{ label: 'What is AAuth?', by: 'Dick Hardt', href: 'https://www.youtube.com/watch?v=OLRQBLIWjHA' },
+				{ label: 'Why We Need AAuth', by: 'Karl McGuinness', href: 'https://www.youtube.com/watch?v=C0jSa8Hf00Q' },
+				{ label: 'All talks & demos', by: 'Playlist · 13 videos', href: 'https://www.youtube.com/playlist?list=PLBfFiS4j04wk' },
+				{ label: 'AAuth Night recap', by: 'Dick Hardt', href: 'https://www.youtube.com/watch?v=qhiTxkNnxjU' }
+			]
+		},
 		{
 			title: 'The Errand: What Sending a Kid to the Shop Teaches Us About Agentic Delegation',
 			author: 'Dasith Wijesiriwardena',
@@ -809,30 +822,70 @@
 			>
 				{#each deepDives as post}
 					{@const authors = Array.isArray(post.author) ? post.author : [post.author]}
-					<a
-						href={post.href}
-						target="_blank"
-						rel="noopener"
-						class="glow-card block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
-					>
-						<div class="flex items-start justify-between gap-4 mb-1">
-							<h3 class="font-semibold">{post.title}</h3>
-							<span class="text-xs text-[var(--color-text-dim)] shrink-0 mt-1 font-mono">{post.date}</span>
+					{#if post.links}
+						<div
+							class="glow-card block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]"
+						>
+							<div class="flex items-start justify-between gap-4 mb-1">
+								<h3 class="font-semibold">{post.title}</h3>
+								<span class="text-xs text-[var(--color-text-dim)] shrink-0 mt-1 font-mono">{post.date}</span>
+							</div>
+							<p class="text-sm text-[var(--color-text-muted)] flex items-center gap-2 mb-4">
+								{#each authors.filter((a) => authorAvatars[a]) as name, j}
+									<img
+										src={authorAvatars[name]}
+										alt={name}
+										width="20"
+										height="20"
+										class="w-5 h-5 rounded-full object-cover shrink-0 {j > 0 ? '-ml-3 ring-2 ring-[var(--color-bg-card)]' : ''}"
+										loading="lazy"
+									/>
+								{/each}
+								<span>{post.desc}</span>
+							</p>
+							<div class="grid gap-2 sm:grid-cols-2">
+								{#each post.links as link}
+									<a
+										href={link.href}
+										target="_blank"
+										rel="noopener"
+										class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] no-underline text-sm transition-colors hover:border-[var(--color-accent)]"
+									>
+										<svg class="w-4 h-4 shrink-0 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+											<path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+										</svg>
+										<span class="font-medium truncate">{link.label}</span>
+										<span class="text-xs text-[var(--color-text-dim)] shrink-0 ml-auto">{link.by} ↗</span>
+									</a>
+								{/each}
+							</div>
 						</div>
-						<p class="text-sm text-[var(--color-text-muted)] flex items-center gap-2">
-							{#each authors.filter((a) => authorAvatars[a]) as name, j}
-								<img
-									src={authorAvatars[name]}
-									alt={name}
-									width="20"
-									height="20"
-									class="w-5 h-5 rounded-full object-cover shrink-0 {j > 0 ? '-ml-3 ring-2 ring-[var(--color-bg-card)]' : ''}"
-									loading="lazy"
-								/>
-							{/each}
-							<span>{authors.join(' & ')} — {post.desc}</span>
-						</p>
-					</a>
+					{:else}
+						<a
+							href={post.href}
+							target="_blank"
+							rel="noopener"
+							class="glow-card block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
+						>
+							<div class="flex items-start justify-between gap-4 mb-1">
+								<h3 class="font-semibold">{post.title}</h3>
+								<span class="text-xs text-[var(--color-text-dim)] shrink-0 mt-1 font-mono">{post.date}</span>
+							</div>
+							<p class="text-sm text-[var(--color-text-muted)] flex items-center gap-2">
+								{#each authors.filter((a) => authorAvatars[a]) as name, j}
+									<img
+										src={authorAvatars[name]}
+										alt={name}
+										width="20"
+										height="20"
+										class="w-5 h-5 rounded-full object-cover shrink-0 {j > 0 ? '-ml-3 ring-2 ring-[var(--color-bg-card)]' : ''}"
+										loading="lazy"
+									/>
+								{/each}
+								<span>{authors.join(' & ')} — {post.desc}</span>
+							</p>
+						</a>
+					{/if}
 				{/each}
 			</div>
 		</InView>
@@ -899,7 +952,10 @@
 			<div class="grid gap-6 md:grid-cols-2">
 				<!-- AAuth Night -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
-					<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Our first AAuth Night was a huge success — thanks to everyone who came out. The next one lands in early October in San Francisco during SF Tech Week.</p>
+					<div>
+						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Our first AAuth Night was a huge success — thanks to everyone who came out! The next one will be October 15th in San Francisco the evening of the AI Security Summit. Save your spot on Luma.</p>
+					</div>
 					<img
 						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=800/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
 						alt="AAuth Night"
@@ -908,6 +964,15 @@
 						loading="lazy"
 						class="w-full rounded-lg"
 					/>
+					<a
+						href="https://luma.com/insecure-rmm0?utm_source=aauth.dev"
+						target="_blank"
+						rel="noopener"
+						onmouseenter={() => aauthNightTrigger++}
+						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+					>
+						<DecryptText text="RSVP on Luma ↗" trigger={aauthNightTrigger} />
+					</a>
 				</div>
 				<!-- Office Hours -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
