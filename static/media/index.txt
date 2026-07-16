@@ -2,6 +2,33 @@
 
 Logo files are free to use for AAuth-related content.
 
+The AA monogram is the single mark across every AAuth touchpoint. It comes in
+two forms:
+
+- **AA Coin** — the monogram on its own dark background. Use this on surfaces
+  you don't control (OAuth consent screens, "connected apps" lists, avatars).
+  It carries its own background, so it looks identical on any host UI.
+- **AA Logo** — transparent background. Use only where you set the background
+  and have checked contrast. The bright green scores just 1.84:1 on white, so
+  the transparent form is not safe on light surfaces.
+
+## AA Coin (monogram on dark background — the robust default)
+
+- [SVG](https://www.aauth.dev/media/aa-coin.svg) — scalable, viewBox 512×512, rounded
+- [SVG, square](https://www.aauth.dev/media/aa-coin-square.svg) — full-bleed; use where the OS applies its own mask (iOS/Android)
+- [PNG 16px](https://www.aauth.dev/media/aa-coin-16.png)
+- [PNG 32px](https://www.aauth.dev/media/aa-coin-32.png)
+- [PNG 48px](https://www.aauth.dev/media/aa-coin-48.png)
+- [PNG 64px](https://www.aauth.dev/media/aa-coin-64.png)
+- [PNG 128px](https://www.aauth.dev/media/aa-coin-128.png)
+- [PNG 180px](https://www.aauth.dev/media/aa-coin-180.png)
+- [PNG 256px](https://www.aauth.dev/media/aa-coin-256.png)
+- [PNG 512px](https://www.aauth.dev/media/aa-coin-512.png)
+
+The 16px and 32px PNGs are optically sized from
+[aa-coin-tiny.svg](https://www.aauth.dev/media/aa-coin-tiny.svg): tighter
+padding and a brighter leading A, so the two A's stay distinct at favicon size.
+
 ## AA Logo (square, transparent background)
 
 - [SVG](https://www.aauth.dev/media/aa-logo.svg) — scalable, viewBox 512×512
@@ -10,9 +37,22 @@ Logo files are free to use for AAuth-related content.
 - [PNG 48px](https://www.aauth.dev/media/aa-logo-48.png)
 - [PNG 64px](https://www.aauth.dev/media/aa-logo-64.png)
 - [PNG 128px](https://www.aauth.dev/media/aa-logo-128.png)
+- [PNG 180px](https://www.aauth.dev/media/aa-logo-180.png)
 - [PNG 256px](https://www.aauth.dev/media/aa-logo-256.png)
 - [PNG 512px](https://www.aauth.dev/media/aa-logo-512.png)
 - [PNG 1024px](https://www.aauth.dev/media/aa-logo-1024.png)
+
+## AAuth Icon (AA monogram, transparent background)
+
+- [SVG](https://www.aauth.dev/media/aauth-icon.svg) — scalable, viewBox 240×209.25
+- [PNG 240w](https://www.aauth.dev/media/aauth-icon-240w.png)
+- [PNG 480w](https://www.aauth.dev/media/aauth-icon-480w.png)
+- [PNG 960w](https://www.aauth.dev/media/aauth-icon-960w.png)
+
+## AAuth Square (AA monogram on square canvas, transparent background)
+
+- [SVG](https://www.aauth.dev/media/aauth-square.svg) — scalable, viewBox 512×512
+- [PNG 512px](https://www.aauth.dev/media/aauth-square-512.png)
 
 ## AAuth Wordmark (horizontal, transparent background)
 
