@@ -228,6 +228,14 @@
 			available: true
 		},
 		{
+			name: 'Go SDK',
+			icon: 'go',
+			iconSize: 27,
+			desc: 'Reference SDK for Go agents and MCP servers with signed-request auth.',
+			href: 'https://github.com/aauth-dev/auth-go',
+			available: true
+		},
+		{
 			name: 'Python Demo Source',
 			icon: 'python',
 			desc: 'End-to-end A2A multi-agent flow with Keycloak and user consent.',
@@ -778,7 +786,7 @@
 							{:else}
 								<picture>
 									<source srcset={`https://cdn.simpleicons.org/${platform.icon}/0f172a`} media="(prefers-color-scheme: light)" />
-									<img src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`} alt="" width="18" height="18" class="inline-block" />
+									<img src={`https://cdn.simpleicons.org/${platform.icon}/e4e4ed`} alt="" width={platform.iconSize || 18} height={platform.iconSize || 18} class="inline-block max-w-none" />
 								</picture>
 							{/if}
 						</div>
