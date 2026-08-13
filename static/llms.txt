@@ -1,12 +1,14 @@
 # AAuth
 
-> AAuth is an authorization protocol for agent-to-resource authorization and identity claim retrieval, supporting four resource access modes with agent governance as an orthogonal layer.
+> AAuth is an authorization protocol for agent-to-resource authorization and identity claim retrieval, supporting five resource access modes with agent governance as an orthogonal layer.
 
 ## What is AAuth?
 
 Every agent — any HTTP client — gets its own cryptographic identity: a domain, static metadata, and a JWKS. No pre-registration, no shared secrets, no dependency on a particular server. An agent signs a request and a resource decides what to do based on who the agent is.
 
-AAuth supports four resource access modes (identity-based, resource-managed, PS-managed, federated), each adding parties and capabilities. Adoption does not require coordination between parties.
+AAuth supports five resource access modes (agent identity, resource-managed, person identity, PS authorization, federated). They differ in what the resource ends up knowing and which party established it, not in how much of the protocol they use. Adoption does not require coordination between parties.
+
+Four token types travel between parties: the agent token (the agent's identity), the person token (the person the agent acts for, at one resource), the resource token (the access a resource needs authorized), and the auth token (the grant). A resource may additionally issue a session token for its own consumption, opaque to the agent, returned in `AAuth-Access` and presented back in `Authorization: AAuth`.
 
 ## Walk an Agent Through AAuth (Start Here)
 
@@ -25,9 +27,9 @@ The demos run against the Hello beta Person Server; data is reset regularly.
 
 ## Specifications
 
-- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-oauth-aauth-protocol/) — current version: [draft-hardt-oauth-aauth-protocol-01](https://datatracker.ietf.org/doc/html/draft-hardt-oauth-aauth-protocol-01). The authorization protocol. Four access modes, three token types, agent governance with missions, clarification chat, and call chaining.
+- [AAuth Protocol (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-oauth-aauth-protocol/) — the datatracker page always resolves to the latest published version; the [editor's copy](https://dickhardt.github.io/AAuth/draft-hardt-oauth-aauth-protocol.html) tracks the working draft. The authorization protocol. Five access modes, four token types, agent governance with missions, clarification chat, and call chaining.
 - [HTTP Signature Keys (Internet-Draft)](https://datatracker.ietf.org/doc/draft-hardt-httpbis-signature-key/): Foundation layer. Well-known key discovery, `Signature-Key` header for conveying public keying material alongside HTTP Message Signatures (RFC 9421).
-- [R3 — Rich Resource Requests (Exploratory)](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html): Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL).
+- [R3 — Rich Resource Requests (Exploratory)](https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html): Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL), plus per-call proposals for operations authorized one call at a time.
 
 ## Implementations
 

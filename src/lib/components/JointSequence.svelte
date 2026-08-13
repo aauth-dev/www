@@ -98,6 +98,10 @@
 				return cursorY;
 			});
 			const H = Math.max(cursorY + STEP_GAP, minHeight);
+			// Lifelines stop just past the last message rather than running to the bottom of the
+			// box. Diagrams share one height (minHeight) so switching tabs doesn't shift the page;
+			// without this a short diagram trails dashed lines through the reserved space.
+			const lifelineEnd = Math.min(H - 10, cursorY + STEP_GAP - 10);
 
 			const graph = new joint.dia.Graph({}, { cellNamespace: joint.shapes });
 			const paper = new joint.dia.Paper({
@@ -124,7 +128,7 @@
 			xs.forEach((x) => {
 				const line = new joint.shapes.standard.Link({
 					source: { x, y: TOP_PAD + ACTOR_H },
-					target: { x, y: H - 10 },
+					target: { x, y: lifelineEnd },
 					attrs: {
 						line: {
 							stroke: theme.lifeline,

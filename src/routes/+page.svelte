@@ -131,27 +131,53 @@
 		{
 			name: 'Resource Managed',
 			parties: 'Agent + Resource',
-			desc: 'Bridge to OAuth 2.0 — the resource handles authorization via its existing OAuth AS,<br>and returns an opaque AAuth Access Token the agent presents on repeat calls with DPoP.',
+			desc: 'Bridge to OAuth 2.0 — the resource runs its own authorization flow and returns a <b>session token</b>,<br>the one credential a resource issues for its own consumption, bound to the agent&rsquo;s signature.',
 			steps: [
 				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token'] },
 				{ from: 'Resource', to: 'Agent', lines: ['202 (interaction required)'], dashed: true },
 				{ note: 'user completes interaction' },
 				{ from: 'Agent', to: 'Resource', lines: ['GET pending URL'] },
-				{ from: 'Resource', to: 'Agent', lines: ['200 OK', 'AAuth-Access: opaque-token'], dashed: true },
-				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token', 'Authorization: AAuth opaque-token'] },
+				{ from: 'Resource', to: 'Agent', lines: ['200 OK', 'AAuth-Access: session-token'], dashed: true },
+				{
+					from: 'Agent',
+					to: 'Resource',
+					lines: [
+						'HTTPSig w/ agent_token',
+						'Authorization: AAuth session-token',
+						'signature covers authorization'
+					]
+				},
+				{ from: 'Resource', to: 'Agent', lines: ['200 OK'], dashed: true }
+			]
+		},
+		{
+			name: 'Person Identity',
+			parties: 'Agent + Resource + Person Server',
+			desc: "Federated login for agents — the Person Server issues a person token for one resource,<br>and the resource serves on the person's identity alone. No resource token, no auth token.",
+			steps: [
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /person w/ {resource}'] },
+				{ from: 'Person Server', to: 'Agent', lines: ['person_token'], dashed: true },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ person_token', 'GET /api/documents'] },
 				{ from: 'Resource', to: 'Agent', lines: ['200 OK'], dashed: true }
 			]
 		},
 		{
 			name: 'Person Server Managed',
 			parties: 'Agent + Resource + Person Server',
-			desc: "Native AAuth — the resource requires the user's identity or consent (or both).<br>The user's Person Server issues an auth token after the user approves.",
+			desc: "Native AAuth — the resource needs an authorization decision, not just the person's identity.<br>It issues a resource token bound to that person token; the Person Server returns an auth token.",
 			steps: [
-				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token', 'POST /authorize'] },
-				{ from: 'Resource', to: 'Agent', lines: ['resource_token', '(aud = Person Server URL)'], dashed: true },
-				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /token w/ resource_token'] },
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /person w/ {resource}'] },
+				{ from: 'Person Server', to: 'Agent', lines: ['person_token'], dashed: true },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ person_token', 'POST /authorize'] },
+				{
+					from: 'Resource',
+					to: 'Agent',
+					lines: ['resource_token', '(aud = Person Server URL)', 'ps / sub / person_token_jti'],
+					dashed: true
+				},
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /auth_token w/ resource_token'] },
 				{ from: 'Person Server', to: 'Agent', lines: ['auth_token'], dashed: true },
-				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ auth token', 'GET /api/documents'] },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ auth_token', 'GET /api/documents'] },
 				{ from: 'Resource', to: 'Agent', lines: ['200 OK'], dashed: true }
 			]
 		},
@@ -160,14 +186,44 @@
 			parties: 'Agent + Resource + Person Server + Access Server',
 			desc: "Cross-domain AAuth — the resource has its own Access Server that federates with the agent's Person Server.<br>Authorization works across org and cloud boundaries without pre-registration.",
 			steps: [
-				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ agent_token', 'POST /authorize'] },
-				{ from: 'Resource', to: 'Agent', lines: ['resource_token', '(aud = Access Server URL)'], dashed: true },
-				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /token w/ resource_token'] },
-				{ from: 'Person Server', to: 'Access Server', lines: ['HTTPSig w/ jwks_uri', 'POST /token w/ resource_token'] },
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /person w/ {resource}'] },
+				{ from: 'Person Server', to: 'Agent', lines: ['person_token'], dashed: true },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ person_token', 'POST /authorize'] },
+				{
+					from: 'Resource',
+					to: 'Agent',
+					lines: ['resource_token', '(aud = Access Server URL)', 'ps / sub / person_token_jti'],
+					dashed: true
+				},
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /auth_token w/ resource_token'] },
+				{ from: 'Person Server', to: 'Access Server', lines: ['HTTPSig w/ jwks_uri', 'POST /auth_token w/ resource_token'] },
 				{ from: 'Access Server', to: 'Person Server', lines: ['auth_token'], dashed: true },
 				{ from: 'Person Server', to: 'Agent', lines: ['auth_token'], dashed: true },
-				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ auth token', 'GET /api/documents'] },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ auth_token', 'GET /api/documents'] },
 				{ from: 'Resource', to: 'Agent', lines: ['200 OK'], dashed: true }
+			]
+		},
+		{
+			name: 'Per-Call',
+			parties: 'Agent + Resource + Person Server + Access Server',
+			desc: "R3 per-call authorization — the resource challenges one invocation with a proposal carrying that call's<br>concrete parameters. The person approves them, and the retry is verified against what was approved.",
+			steps: [
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ person_token', 'POST /send_email (r3_per_call)'] },
+				{
+					from: 'Resource',
+					to: 'Agent',
+					lines: ['401 + resource_token', 'r3_uri/r3_s256 → per-call proposal'],
+					dashed: true
+				},
+				{ from: 'Agent', to: 'Person Server', lines: ['HTTPSig w/ agent_token', 'POST /auth_token w/ resource_token'] },
+				{ from: 'Person Server', to: 'Access Server', lines: ['HTTPSig w/ jwks_uri', 'POST /auth_token w/ resource_token'] },
+				{ from: 'Access Server', to: 'Resource', lines: ['GET r3_uri (signed)'] },
+				{ from: 'Resource', to: 'Access Server', lines: ['proposal: operation + parameters'], dashed: true },
+				{ note: 'person approves these exact parameters' },
+				{ from: 'Access Server', to: 'Person Server', lines: ['auth_token (r3_granted: this call)'], dashed: true },
+				{ from: 'Person Server', to: 'Agent', lines: ['auth_token'], dashed: true },
+				{ from: 'Agent', to: 'Resource', lines: ['HTTPSig w/ auth_token', 'POST /send_email (same parameters)'] },
+				{ from: 'Resource', to: 'Agent', lines: ['200 OK', 'parameters verified vs proposal'], dashed: true }
 			]
 		}
 	];
@@ -181,7 +237,7 @@
 			status: 'Internet-Draft',
 			href: 'https://datatracker.ietf.org/doc/draft-hardt-oauth-aauth-protocol',
 			editorsCopy: 'https://dickhardt.github.io/AAuth/draft-hardt-oauth-aauth-protocol.html',
-			desc: 'The authorization protocol for agent-to-resource access. Four access modes, three token types, agent governance, missions, clarification chat, and call chaining.',
+			desc: 'The authorization protocol for agent-to-resource access. Five access modes, four token types, agent governance, missions, clarification chat, and call chaining.',
 			primary: true,
 			indent: false
 		},
@@ -199,7 +255,7 @@
 			status: 'Exploratory',
 			href: 'https://dickhardt.github.io/AAuth/draft-hardt-aauth-r3.html',
 			editorsCopy: null,
-			desc: 'Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL).',
+			desc: 'Vocabulary-based authorization using formats agents already understand (MCP, OpenAPI, gRPC, GraphQL), plus per-call proposals for operations authorized one call at a time.',
 			primary: false,
 			indent: true
 		}
@@ -562,8 +618,9 @@
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">How AAuth Works</h2>
 			<p class="text-[var(--color-text-muted)] mb-4 text-lg">
-				AAuth has four access modes. All replace API keys with cryptographic identity.<br class="hidden sm:inline" />
-				Capability grows from simplest to most capable — adopt incrementally as your needs expand.
+				AAuth has five access modes. All replace API keys with cryptographic identity.<br class="hidden sm:inline" />
+				They differ in what the resource ends up knowing and which party established it — adopt incrementally as your needs expand.<br class="hidden sm:inline" />
+				Per-call authorization, from R3, governs a single action rather than a class of access.
 			</p>
 		</InView>
 
@@ -638,8 +695,10 @@
 			<div class="mt-4 flex justify-start">
 				<ul class="text-xs text-left text-[var(--color-text-dim)] space-y-1 font-mono list-none">
 					<li><span class="text-[var(--color-text-muted)]">agent_token</span> establishes the agent's identity</li>
+					<li><span class="text-[var(--color-text-muted)]">person_token</span> names the person the agent acts for, at one resource</li>
 					<li><span class="text-[var(--color-text-muted)]">resource_token</span> describes the access needed</li>
 					<li><span class="text-[var(--color-text-muted)]">auth_token</span> grants an agent access to a resource</li>
+					<li><span class="text-[var(--color-text-muted)]">session-token</span> issued by a resource for its own consumption, opaque to the agent</li>
 					<li><span class="text-[var(--color-text-muted)]">jwks_uri</span> Person Server's JWKS endpoint, discovered via well-known metadata</li>
 				</ul>
 			</div>
