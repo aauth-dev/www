@@ -15,7 +15,7 @@
 
 const REDIRECTS = {
 	'/ietf-slack': 'https://join.slack.com/t/ietf/shared_invite/zt-3wlnl6g9t-UF~rAQwk06nNJUM6QtaaPg',
-	'/slack': 'https://join.slack.com/t/aauth/shared_invite/zt-3wsxbrzfk-oYb3xNWVPLZICkXwuJpaDg',
+	'/slack': 'https://join.slack.com/t/aauth/shared_invite/zt-48fvna1sy-dmBJNrxoedyARvK2fPwlYw',
 };
 
 const AGENT_UA = [
