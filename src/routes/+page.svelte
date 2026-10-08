@@ -1047,10 +1047,10 @@
 						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Working on implementing AAuth? Join Dick Hardt and fellow builders at Postman HQ in San Francisco on October 19th, 1–5pm, for an afternoon of discussion, learning, and shared discoveries.</p>
 					</div>
 					<img
-						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,anim=false,background=white,quality=75,width=800,height=420/event-social/1m/d1c642de-be4d-481c-a525-f3a81a623275.png"
+						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=800/uploads/n8/04651e78-8033-4825-a5a4-d36ea6a385b2.png"
 						alt="AAuth Workshop"
 						width="800"
-						height="420"
+						height="800"
 						loading="lazy"
 						class="w-full rounded-lg"
 					/>
