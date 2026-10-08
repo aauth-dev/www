@@ -310,6 +310,13 @@
 
 	const deepDives = [
 		{
+			title: 'Self-Driving Software: What OAuth Can’t Do for AI Agents',
+			author: ['Dick Hardt', 'Ken Simpson'],
+			desc: 'MailChannels interview on agent accountability, why OAuth was never built for agents, and killing off API keys',
+			href: 'https://www.youtube.com/watch?v=kI3YEkWJl60',
+			date: '2026-09-02'
+		},
+		{
 			title: 'AAuth Night: Moving Beyond OAuth',
 			author: ['Dick Hardt', 'Karl McGuinness'],
 			desc: 'Talks and demos from the first AAuth Night — July 2026, AI Engineer World\'s Fair',
@@ -390,6 +397,7 @@
 		'Christian Posta': '/authors/christian-posta.jpg',
 		'Dasith Wijesiriwardena': '/authors/dasith-wijesiriwardena.jpg',
 		'Karl McGuinness': '/authors/karl-mcguinness.png',
+		'Ken Simpson': '/authors/ken-simpson.jpg',
 		'Mark Hendrickson': '/authors/mark-hendrickson.jpg',
 		'Dick Hardt': '/authors/dick-hardt.jpg'
 	};
