@@ -33,6 +33,7 @@
 	let prTrigger = $state(0);
 	let officeHoursTrigger = $state(0);
 	let aauthNightTrigger = $state(0);
+	let workshopTrigger = $state(0);
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -1016,7 +1017,7 @@
 			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
-			<div class="grid gap-6 md:grid-cols-2">
+			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 				<!-- AAuth Night -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
 					<div>
@@ -1039,6 +1040,30 @@
 						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 					>
 						<DecryptText text="RSVP on Luma ↗" trigger={aauthNightTrigger} />
+					</a>
+				</div>
+				<!-- AAuth Workshop -->
+				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
+					<div>
+						<h3 class="font-mono font-semibold mb-1">AAuth Workshop</h3>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Working on implementing AAuth? Join Dick Hardt and fellow builders at Postman HQ in San Francisco on October 19th, 1–5pm, for an afternoon of discussion, learning, and shared discoveries.</p>
+					</div>
+					<img
+						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,anim=false,background=white,quality=75,width=800,height=420/event-social/1m/d1c642de-be4d-481c-a525-f3a81a623275.png"
+						alt="AAuth Workshop"
+						width="800"
+						height="420"
+						loading="lazy"
+						class="w-full rounded-lg"
+					/>
+					<a
+						href="https://luma.com/qutfq6ju?utm_source=aauth.dev"
+						target="_blank"
+						rel="noopener"
+						onmouseenter={() => workshopTrigger++}
+						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
+					>
+						<DecryptText text="RSVP on Luma ↗" trigger={workshopTrigger} />
 					</a>
 				</div>
 				<!-- Office Hours -->

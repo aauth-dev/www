@@ -33,6 +33,14 @@
 		: 'border-transparent'}"
 	aria-label="Main"
 >
+	<a
+		href="#events"
+		class="flex items-center justify-center gap-2 h-8 px-4 text-xs sm:text-sm font-medium bg-[var(--color-accent)] text-[var(--color-on-accent)] hover:opacity-90 transition-opacity no-underline"
+		onclick={closeMobile}
+	>
+		<span class="truncate">Come to <span class="font-semibold">AAuth Night</span> Oct 15 and the <span class="font-semibold">AAuth Workshop</span> Oct 19.</span>
+		<span class="whitespace-nowrap underline underline-offset-2">Details below</span>
+	</a>
 	<div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-5 md:px-8 h-12">
 	<a
 		href="/"
