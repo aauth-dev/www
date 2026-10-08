@@ -31,7 +31,6 @@
 	let getStartedTrigger = $state(0);
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
-	let officeHoursTrigger = $state(0);
 	let aauthNightTrigger = $state(0);
 	let workshopTrigger = $state(0);
 
@@ -100,15 +99,6 @@
 
 	let demoTriggers = $state([0]);
 
-	let lumaTheme = $state('dark');
-	$effect(() => {
-		if (typeof window === 'undefined') return;
-		const mql = window.matchMedia('(prefers-color-scheme: light)');
-		const update = () => (lumaTheme = mql.matches ? 'light' : 'dark');
-		update();
-		mql.addEventListener('change', update);
-		return () => mql.removeEventListener('change', update);
-	});
 	let copiedIdx = $state(-1);
 
 	async function copyPrompt(text, idx) {
@@ -1017,7 +1007,7 @@
 			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
 		</InView>
 		<InView>
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+			<div class="grid gap-6 md:grid-cols-2">
 				<!-- AAuth Night -->
 				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
 					<div>
@@ -1064,33 +1054,6 @@
 						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
 					>
 						<DecryptText text="RSVP on Luma ↗" trigger={workshopTrigger} />
-					</a>
-				</div>
-				<!-- Office Hours -->
-				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
-					<div>
-						<h3 class="font-mono font-semibold mb-1">Office Hours</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-3">Drop in to ask questions, share what you're building, or listen along. Monthly sessions through September.</p>
-					</div>
-					<div class="rounded-xl overflow-hidden border border-[var(--color-border)] flex-1">
-						<iframe
-							src={`https://luma.com/embed/calendar/cal-nXUxsqTY2ZQgy3b/events?lt=${lumaTheme}`}
-							width="600"
-							height="400"
-							style="border: 0; width: 100%; display: block;"
-							loading="lazy"
-							allow="fullscreen; payment"
-							title="AAuth Office Hours calendar"
-						></iframe>
-					</div>
-					<a
-						href="https://lu.ma/aauth"
-						target="_blank"
-						rel="noopener"
-						onmouseenter={() => officeHoursTrigger++}
-						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
-					>
-						<DecryptText text="View calendar ↗" trigger={officeHoursTrigger} />
 					</a>
 				</div>
 			</div>
