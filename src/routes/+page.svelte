@@ -31,8 +31,6 @@
 	let getStartedTrigger = $state(0);
 	let issueTrigger = $state(0);
 	let prTrigger = $state(0);
-	let aauthNightTrigger = $state(0);
-	let workshopTrigger = $state(0);
 
 	let layersVisible = $state(false);
 	let layersEl;
@@ -309,6 +307,20 @@
 	];
 
 	const deepDives = [
+		{
+			title: 'AAuth Night: Moving Beyond OAuth',
+			author: ['Dick Hardt', 'Karl McGuinness', 'Eugene Vyborov', 'Julian Bright', 'Jared Hason'],
+			desc: 'Talks and demos from the second AAuth Night — October 2026, San Francisco, the evening of the AI Security Summit',
+			date: '2026-10-15',
+			links: [
+				{ label: 'Why We Need AAuth', by: 'Karl McGuinness', href: 'https://www.youtube.com/watch?v=y747GBAFMKw' },
+				{ label: 'The Future is Supervised', by: 'Dick Hardt', href: 'https://www.youtube.com/watch?v=L_Eq9rLMIRA' },
+				{ label: 'Agent Fleets Authenticate Using AAuth', by: 'Eugene Vyborov', href: 'https://www.youtube.com/watch?v=qVNQWondXIc' },
+				{ label: 'Introspection demo', by: 'Julian Bright', href: 'https://www.youtube.com/watch?v=82CUVZ1FGcw' },
+				{ label: 'Keycard demo', by: 'Jared Hason', href: 'https://www.youtube.com/watch?v=tXB_j1mrebM' },
+				{ label: 'All talks & demos', by: 'Playlist · 7 videos', href: 'https://www.youtube.com/playlist?list=PLLt0s3eBn2nw' }
+			]
+		},
 		{
 			title: 'Self-Driving Software: What OAuth Can’t Do for AI Agents',
 			author: ['Dick Hardt', 'Ken Simpson'],
@@ -1004,68 +1016,6 @@
 				</InView>
 			{/each}
 		</div>
-	</div>
-</section>
-
-
-<!-- Events -->
-<section id="events" class="scroll-mt-24 py-[1.82rem] md:py-[3.12rem]">
-	<div class="max-w-7xl mx-auto px-5 md:px-8">
-		<InView>
-			<h2 class="text-3xl md:text-4xl font-bold mb-10 uppercase">Events</h2>
-		</InView>
-		<InView>
-			<div class="grid gap-6 md:grid-cols-2">
-				<!-- AAuth Night -->
-				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
-					<div>
-						<h3 class="font-mono font-semibold mb-1">AAuth Night</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Our first AAuth Night was a huge success — thanks to everyone who came out! The next one will be October 15th in San Francisco the evening of the AI Security Summit. Save your spot on Luma.</p>
-					</div>
-					<img
-						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=800/uploads/hm/9cffc7c6-801f-4d00-9eff-25acb9033c4a.png"
-						alt="AAuth Night"
-						width="800"
-						height="800"
-						loading="lazy"
-						class="w-full rounded-lg"
-					/>
-					<a
-						href="https://luma.com/insecure-rmm0?utm_source=aauth.dev"
-						target="_blank"
-						rel="noopener"
-						onmouseenter={() => aauthNightTrigger++}
-						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
-					>
-						<DecryptText text="RSVP on Luma ↗" trigger={aauthNightTrigger} />
-					</a>
-				</div>
-				<!-- AAuth Workshop -->
-				<div class="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] flex flex-col gap-4">
-					<div>
-						<h3 class="font-mono font-semibold mb-1">AAuth Workshop</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">Working on implementing AAuth? Join Dick Hardt and fellow builders at Postman HQ in San Francisco on October 19th, 1–5pm, for an afternoon of discussion, learning, and shared discoveries.</p>
-					</div>
-					<img
-						src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=1,background=white,quality=75,width=800,height=800/uploads/n8/04651e78-8033-4825-a5a4-d36ea6a385b2.png"
-						alt="AAuth Workshop"
-						width="800"
-						height="800"
-						loading="lazy"
-						class="w-full rounded-lg"
-					/>
-					<a
-						href="https://luma.com/qutfq6ju?utm_source=aauth.dev"
-						target="_blank"
-						rel="noopener"
-						onmouseenter={() => workshopTrigger++}
-						class="self-start font-display inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-on-accent)] font-medium no-underline"
-					>
-						<DecryptText text="RSVP on Luma ↗" trigger={workshopTrigger} />
-					</a>
-				</div>
-			</div>
-		</InView>
 	</div>
 </section>
 

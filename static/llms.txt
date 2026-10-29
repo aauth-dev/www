@@ -56,6 +56,7 @@ Each package's README lives in the linked source directory. Browse on GitHub (ag
 
 ## Articles
 
+- 2026-06-10 — Dasith Wijesiriwardena, [The Errand: What Sending a Kid to the Shop Teaches Us About Agentic Delegation](https://dasith.me/2026/06/10/the-errand-agentic-delegation/): A corner-shop errand analogy for how AAuth lets agents act safely on a user's behalf.
 - 2026-04-28 — Mark Hendrickson, [Know Which of Your Agents Wrote What](https://markmhendrickson.com/posts/know-which-of-your-agents-wrote-what/): Per-row attribution for agent writes via AAuth identity in Neotoma.
 - 2026-04-15 — Karl McGuinness, [AAuth Now Has a Mission Layer](https://www.linkedin.com/pulse/aauth-now-has-mission-layer-karl-mcguinness-uhqjc/): Mission as a first-class protocol object.
 - 2026-03-31 — Christian Posta, [AAuth Full Demo](https://blog.christianposta.com/aauth-full-demo/): Working demo with Keycloak, Agentgateway, Java/Python/Rust.
@@ -63,6 +64,21 @@ Each package's README lives in the linked source directory. Browse on GitHub (ag
 - 2026-03-15 — Karl McGuinness, [Mission Architecture on AAuth](https://notes.karlmcguinness.com/notes/mission-architecture-on-aauth/): Whether AAuth is the right protocol foundation for mission-bound authorization.
 - 2026-02-17 — Christian Posta, [Deep Dive AAuth — Identity and Access Management for AI Agents](https://blog.christianposta.com/exploring-aauth-agent-auth-identity-and-access-management-for-ai-agents/): Comprehensive overview of AAuth architecture and design.
 - 2025-06-02 — Christian Posta, [Do AI Agents Need Their Own Identity?](https://blog.christianposta.com/do-we-even-need-agent-identity/): The case for independent agent identity.
+
+## Videos
+
+- 2026-10-15 — [AAuth Night: Moving Beyond OAuth, San Francisco](https://www.youtube.com/playlist?list=PLLt0s3eBn2nw): Playlist of talks and demos from the second AAuth Night.
+  - Karl McGuinness, [Why We Need AAuth](https://www.youtube.com/watch?v=y747GBAFMKw)
+  - Dick Hardt, [The Future is Supervised](https://www.youtube.com/watch?v=L_Eq9rLMIRA)
+  - Eugene Vyborov (Trinity), [Agent Fleets Authenticate Using AAuth](https://www.youtube.com/watch?v=qVNQWondXIc)
+  - Julian Bright (Introspection), [AAuth Demo](https://www.youtube.com/watch?v=82CUVZ1FGcw)
+  - Jared Hason (Keycard), [AAuth Demo](https://www.youtube.com/watch?v=tXB_j1mrebM)
+- 2026-09-02 — Dick Hardt & Ken Simpson, [Self-Driving Software: What OAuth Can’t Do for AI Agents](https://www.youtube.com/watch?v=kI3YEkWJl60): MailChannels interview on agent accountability, why OAuth was never built for agents, and killing off API keys.
+- 2026-07-01 — [AAuth Night: Moving Beyond OAuth, AI Engineer World's Fair](https://www.youtube.com/playlist?list=PLBfFiS4j04wk): Playlist of talks and demos from the first AAuth Night.
+  - Dick Hardt, [What is AAuth?](https://www.youtube.com/watch?v=OLRQBLIWjHA)
+  - Karl McGuinness, [Why We Need AAuth](https://www.youtube.com/watch?v=C0jSa8Hf00Q)
+  - Dick Hardt, [AAuth Night recap](https://www.youtube.com/watch?v=qhiTxkNnxjU)
+- 2026-06-03 — Dick Hardt, [Insecure Agents Podcast: Moving Beyond OAuth and the Future of Agent Auth](https://www.youtube.com/watch?v=pn-m4YJQkqs): Why OAuth breaks for agents and running them without API keys.
 
 ## Media / Brand Assets
 
