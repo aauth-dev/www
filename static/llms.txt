@@ -50,7 +50,6 @@ Each package's README lives in the linked source directory. Browse on GitHub (ag
 
 ## Community
 
-- [IETF Slack](https://www.aauth.dev/ietf-slack): IETF #aauth channel for AAuth specification discussion and feedback.
 - [AAuth Slack](https://www.aauth.dev/slack): AAuth community Slack for implementation discussion and questions.
 - [Office Hours](https://lu.ma/aauth): Open community calls — ask questions, share what you're building, or listen along.
 

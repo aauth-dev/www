@@ -291,13 +291,6 @@
 
 	const slacks = [
 		{
-			name: 'IETF Slack',
-			desc: 'IETF #aauth channel for AAuth specification discussion and feedback.',
-			href: 'https://www.aauth.dev/ietf-slack',
-			logo: '/ietf.jpg',
-			event: 'IETF+Slack+Click'
-		},
-		{
 			name: 'AAuth Slack',
 			desc: 'AAuth community Slack for implementation discussion and questions.',
 			href: 'https://www.aauth.dev/slack',
