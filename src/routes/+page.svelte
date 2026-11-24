@@ -289,7 +289,14 @@
 		}
 	];
 
-	const slacks = [
+	const community = [
+		{
+			name: 'OpenID AAuth WG',
+			desc: 'OpenID Foundation working group developing the AAuth specifications. Charter, specs, and how to participate.',
+			href: 'https://openid.net/wg/aauth/',
+			logo: '/openid.jpg',
+			event: 'OpenID+WG+Click'
+		},
 		{
 			name: 'AAuth Slack',
 			desc: 'AAuth community Slack for implementation discussion and questions.',
@@ -970,7 +977,7 @@
 		<InView>
 			<h2 class="text-3xl md:text-4xl font-bold mb-4 uppercase">Community</h2>
 			<p class="text-[var(--color-text-muted)] mb-10 text-lg">
-				Join the discussion on Slack.
+				Join the discussion and the standards work.
 			</p>
 		</InView>
 		<div
@@ -992,19 +999,19 @@
 				});
 			}}
 		>
-			{#each slacks as slack}
+			{#each community as item}
 				<InView class="h-full">
 					<a
-						href={slack.href}
+						href={item.href}
 						target="_blank"
 						rel="noopener"
-						class="glow-card plausible-event-name={slack.event} block h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
+						class="glow-card plausible-event-name={item.event} block h-full p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] no-underline transition-transform duration-200 hover:scale-[1.02]"
 					>
 						<h3 class="font-mono font-semibold mb-2 flex items-center gap-3">
-							<img src={slack.logo} alt="" width="32" height="32" class="inline-block rounded-md" />
-							{slack.name}
+							<img src={item.logo} alt="" width="32" height="32" class="inline-block rounded-md" />
+							{item.name}
 						</h3>
-						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">{slack.desc}</p>
+						<p class="text-sm text-[var(--color-text-muted)] leading-relaxed">{item.desc}</p>
 					</a>
 				</InView>
 			{/each}
